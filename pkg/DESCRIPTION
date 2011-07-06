@@ -1,0 +1,12 @@
+Package: R2STATS
+Type: Package
+Title: A GUI for GLM and GLMM in R
+Version: 0.65
+Encoding: UTF-8
+Date: 2010-08-31
+Author: Yvonnick Noel
+Maintainer: Yvonnick Noel, University of Brittany, France <yvonnick.noel@uhb.fr>
+Description: R2STATS is a gWidgetsRGtk2 GUI for fitting and comparing GLM and GLMM in R, including multinomial ordinal and nominal models. It is designed to make comparisons between numerous models easy, both numerically and graphically. Relevant plots are automatically produced for each model family. R2STATS is *not* a graphical interface for R, but for statistical modelling in a model comparison approach.
+License: GPL (>=2)
+LazyLoad: no
+Depends: proto, cairoDevice, gWidgetsRGtk2, lme4, MASS, RGtk2Extras

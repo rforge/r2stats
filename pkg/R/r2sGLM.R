@@ -125,21 +125,21 @@ r2sGLM = proto(
     r2stats$setStatus("Statut : sortie des résultats numériques....")
     
     # Display model name and specifications
-    add(r2stats$results,paste("Modèle",.$name),font.attr=c(style="normal",weights="bold",sizes="large",col="blue"))
+    add(r2stats$results,paste("Modèle",.$name),font.attr=c(style="normal",weights="bold",size="large",col="blue"))
     modelProps = cbind(c("Tableau","Formule","Contrainte","Lien","Distribution"),
                        c(.$data,.$getFormula(),.$getConstrFactor(),link,family))
     add(r2stats$results,capture.output(prmatrix(modelProps,rowlab=rep("",5),collab=rep("",2),quote=F)),font.attr=c(family="monospace",size="medium"))
     add(r2stats$results,"")
 
     # Display fit statistics
-    add(r2stats$results,"Qualité d\'ajustement", font.attr=c(style="normal",weights="bold",sizes="medium"))
+    add(r2stats$results,"Qualité d\'ajustement", font.attr=c(style="normal",weights="bold",col="black"))
     add(r2stats$results,"")
     add(r2stats$results,capture.output(res),font.attr=c(family="monospace",size="medium"))
     add(r2stats$results,"")
 
     # Display test of normality
     if(!is.null(normtest)) { 
-      add(r2stats$results,"Test de normalité",font.attr=c(style="normal",weights="bold",size="medium"))
+      add(r2stats$results,"Test de normalité",font.attr=c(style="normal",weights="bold",col="black"))
       add(r2stats$results,"")
       add(r2stats$results,capture.output(normtest),font.attr=c(family="monospace",size="medium"))
       add(r2stats$results,"")
@@ -147,7 +147,7 @@ r2sGLM = proto(
     
     # Display test of homogeneity of variance
     if(!is.null(vartest)) {
-      add(r2stats$results,"Test d\'homogénéité des variances", font.attr=c(style="normal",weights="bold",size="medium"))
+      add(r2stats$results,"Test d\'homogénéité des variances", font.attr=c(style="normal",weights="bold",col="black"))
       add(r2stats$results,"")
       add(r2stats$results,capture.output(vartest),font.attr=c(family="monospace",size="medium"))
       add(r2stats$results,"")
@@ -155,18 +155,18 @@ r2sGLM = proto(
     
     # Display fitted values averaged by group, and group frequencies
     if(length(.$designFactors)) {
-      add(r2stats$results,"Valeurs prévues (par groupes)",font.attr=c(style="normal",weights="bold",size="medium"))
+      add(r2stats$results,"Valeurs prévues (par groupes)",font.attr=c(style="normal",weights="bold",col="black"))
       add(r2stats$results,"")
       add(r2stats$results,capture.output(tapply(.$getPrediction(),model.data[,.$designFactors],mean)),font.attr=c(family="monospace",size="medium"))
       add(r2stats$results,"")
-      add(r2stats$results,"Effectifs (par groupes)",font.attr=c(style="normal",weights="bold",size="medium"))
+      add(r2stats$results,"Effectifs (par groupes)",font.attr=c(style="normal",weights="bold",col="black"))
       add(r2stats$results,"")
       add(r2stats$results,capture.output(tapply(.$getPriorWeights(),model.data[,.$designFactors],sum)),font.attr=c(family="monospace",size="medium"))
       add(r2stats$results,"")
     }
 
     # Display coefficients
-    add(r2stats$results,"Coefficients",font.attr=c(style="normal",weights="bold",size="medium"))
+    add(r2stats$results,"Coefficients",font.attr=c(style="normal",weights="bold",col="black"))
     add(r2stats$results,"")
     if(nrow(s$coefficients) > 0) {
       add(r2stats$results,capture.output(s$coefficients),font.attr=c(family="monospace",size="medium"))
@@ -422,7 +422,7 @@ r2sGLM = proto(
       # With a group structure
       else {
         fit = tapply(fit,.$groupLabels,mean)
-        r2stats$currentPlot = densityplot(~y,groups=.$groupLabels,xlab=.$dv[1],ylab="Densité",main=paste("Densité de la réponse",.$name,sep=" - "),
+        r2stats$currentPlot = densityplot(~y,groups=.$groupLabels,xlab=.$dv[1],ylab="Densité",main=paste("Densité de la réponse",.$name,sep=" - "),lwd=2,
                                      panel = "panel.superpose",col=.$groupFullColors,
                                      key = list(space=legend.loc,text=list(levels(.$groupLabels)),col=.$groupFullColors,columns=legend.cols),
                                      panel.groups = function(x,group.number,...) {
@@ -659,7 +659,7 @@ r2sGLM = proto(
     # Two groups
     if(nl == 2) {
       vt = var.test(y~group)
-      table = c(vt$statistic,vt$parameter,p=vt$p.value)
+      table = c(vt$statistic,round(vt$parameter),p=vt$p.value)
       names(table)=c("F","d.d.l. num.","d.d.l. dénom.","p")
     }
     

@@ -14,7 +14,7 @@ require(proto)
 require(MASS)
 require(lme4)
 require(RGtk2Extras)
-require(ordinal)
+# require(ordinal)
 
 r2stats = proto(
 
@@ -1536,10 +1536,11 @@ r2stats = proto(
       return()
     }
     
-    # Remove from R2STATS model list
+    # Remove from model list in the Compare tab
    .$models[modelsToDelete] = NULL
    
-    # Remove model name from
+    # Remove from model list in the Model tab
+    .$updateModelNameList(h,...)
     
     # Refresh model list in tab 5
    .$updateModelList(h,...)
@@ -1598,7 +1599,7 @@ r2stats = proto(
     # Print titles
     add(.$results,"Comparaison et résumé de modèles",font.attr=c(style="normal",weights="bold",size="large",col="blue"))
     add(.$results,"")
-    add(.$results,"Table d\'analyse de la variance/déviance",font.attr=c(style="normal",weights="bold",size="medium"))
+    add(.$results,"Table d\'analyse de la variance/déviance",font.attr=c(style="normal",weights="bold",col="black"))
     add(.$results,"")
     
     if( (length(classes)==1) && (classes == "glm")) {

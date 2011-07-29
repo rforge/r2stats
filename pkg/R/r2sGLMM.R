@@ -128,21 +128,21 @@ r2sGLMM = proto(
     r2stats$setStatus("Statut : sortie des résultats numériques....")
     
     # Display model name and specifications
-    add(r2stats$results,paste("Modèle",.$name),font.attr=c(style="normal",weights="bold",sizes="large",col="blue"))
+    add(r2stats$results,paste("Modèle",.$name),font.attr=c(style="normal",weights="bold",size="large",col="blue"))
     modelProps = cbind(c("Tableau","Formule","Contrainte","Lien","Distribution"),
                        c(.$data,.$getFormula(),.$getConstrFactor(),link,family))
     add(r2stats$results,capture.output(prmatrix(modelProps,rowlab=rep("",5),collab=rep("",2),quote=F)),font.attr=c(family="monospace",size="medium"))
     add(r2stats$results,"")
 
     # Display fit statistics
-    add(r2stats$results,"Qualité d\'ajustement", font.attr=c(style="normal",weights="bold",sizes="medium"))
+    add(r2stats$results,"Qualité d\'ajustement", font.attr=c(style="normal",col="black",weights="bold"))
     add(r2stats$results,"")
     add(r2stats$results,capture.output(res),font.attr=c(family="monospace",size="medium"))
     add(r2stats$results,"")
 
     # Display test of normality
     if(!is.null(normtest)) { 
-      add(r2stats$results,"Test de normalité",font.attr=c(style="normal",weights="bold",size="medium"))
+      add(r2stats$results,"Test de normalité",font.attr=c(style="normal",col="black",weights="bold"))
       add(r2stats$results,"")
       add(r2stats$results,capture.output(normtest),font.attr=c(family="monospace",size="medium"))
       add(r2stats$results,"")
@@ -150,7 +150,7 @@ r2sGLMM = proto(
     
     # Display test of homogeneity of variance
     if(!is.null(vartest)) {
-      add(r2stats$results,"Test d\'homogénéité des variances", font.attr=c(style="normal",weights="bold",size="medium"))
+      add(r2stats$results,"Test d\'homogénéité des variances", font.attr=c(style="normal",col="black",weights="bold"))
       add(r2stats$results,"")
       add(r2stats$results,capture.output(vartest),font.attr=c(family="monospace",size="medium"))
       add(r2stats$results,"")
@@ -158,24 +158,24 @@ r2sGLMM = proto(
     
     # Display fitted values averaged by group, and group frequencies
     if(length(.$designFactors)) {
-      add(r2stats$results,"Valeurs prévues (par groupes)",font.attr=c(style="normal",weights="bold",size="medium"))
+      add(r2stats$results,"Valeurs prévues (par groupes)",font.attr=c(style="normal",col="black",weights="bold"))
       add(r2stats$results,"")
       add(r2stats$results,capture.output(tapply(.$getPrediction(),model.data[,.$designFactors],mean)),font.attr=c(family="monospace",size="medium"))
       add(r2stats$results,"")
-      add(r2stats$results,"Effectifs (par groupes)",font.attr=c(style="normal",weights="bold",size="medium"))
+      add(r2stats$results,"Effectifs (par groupes)",font.attr=c(style="normal",sizes="large",weights="bold",size="medium"))
       add(r2stats$results,"")
       add(r2stats$results,capture.output(tapply(.$getPriorWeights(),model.data[,.$designFactors],sum)),font.attr=c(family="monospace",size="medium"))
       add(r2stats$results,"")
     }
 
     # Display estimates
-    add(r2stats$results,"Effets fixes",font.attr=c(style="normal",weights="bold",size="medium"))
+    add(r2stats$results,"Effets fixes",font.attr=c(style="normal",col="black",weights="bold"))
     add(r2stats$results,"")
     if(nrow(s@coefs) > 0) {
       add(r2stats$results,capture.output(s@coefs),font.attr=c(family="monospace",size="medium"))
       add(r2stats$results,"")
     }
-    add(r2stats$results,"Effets aléatoires",font.attr=c(style="normal",weights="bold",size="medium"))
+    add(r2stats$results,"Effets aléatoires",font.attr=c(style="normal",col="black",weights="bold"))
     add(r2stats$results,"")
     if(nrow(s@REmat) > 0) {
       colnames(s@REmat)[1:4] = c("Groupes","Noms","Variance","Ecart-type")

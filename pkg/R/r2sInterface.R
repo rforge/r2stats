@@ -7,6 +7,10 @@
 #--------------------------------------------------------------------------------------------------
 #                                      INTERFACE PROTOTYPE
 #--------------------------------------------------------------------------------------------------
+
+# A first dataset
+data(sleepstudy)
+
 # Required libraries
 options(guiToolkit="RGtk2",width=160)
 require(gWidgetsRGtk2)
@@ -1868,4 +1872,16 @@ r2stats = proto(
   #----- Option setting
  )
  
+# Main
+R2STATS = function() {
+
+  # Create R2STATS main window
+  r2stats$create()
+  
+  # Some settings
+  r2stats$setVersion(0.65)
+
+  # Show R2STATS interface
+  r2stats$show()
+}
 

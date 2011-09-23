@@ -86,8 +86,10 @@ r2stats = proto(
     add(gridTab,         gridGroup  <- ggroup(horizontal=FALSE), expand=TRUE)
 
     # Recode utility
-    add(gridGroup,  transfrm        <- gexpandgroup("Recodage et transformation"))
-    add(transfrm,   tmp             <- ggroup(horizontal=FALSE))
+    # add(gridGroup,  transfrm        <- gexpandgroup("Recodage et transformation"))
+    transfrm        <- gexpandgroup("Recodage et transformation",cont=gridGroup)
+    # add(transfrm,   tmp             <- ggroup(horizontal=FALSE))
+    tmp             <- ggroup(horizontal=FALSE,cont=transfrm)
     add(tmp,        glabel("Avec :"))
     add(tmp,       .$currentFactor  <- gdroplist("Aucune",handler=.$printCat))
     add(transfrm,   tmp             <- ggroup(horizontal=FALSE),expand=TRUE)

@@ -25,7 +25,7 @@ r2sGLM = proto(
     family = .$getFamily()
     link   = .$getLink()
     
-    r2stats$setStatus("Statut : estimation des paramètres en cours....")
+    r2stats$setStatus(.$translate("Status: Parameter estimation in progress..."))
 
     # Is the dependent variable a matrix?
     dv = .$dvField
@@ -63,7 +63,7 @@ r2sGLM = proto(
     }
     
 	  # If a contrast factor is defined, refit with this constraint
-	  if(.$constrFactor != "Aucun") {
+	  if(.$constrFactor != .$translate("No factor")) {
       res = try(eval(parse(text=paste(".$Rmodel <-update(.$Rmodel,.~",.$getConstrainedFormula(),")"))))
       if(inherits(res,"try-error")) return(res)
 	  }
@@ -74,7 +74,7 @@ r2sGLM = proto(
   Summary = function(.) {
   
     if(! .$estimated) {
-      r2stats$setStatus("Statut : Prêt.")
+      r2stats$setStatus(.$translate("Status: Ready."))
       return()
     }
     

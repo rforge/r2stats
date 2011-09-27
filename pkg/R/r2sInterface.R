@@ -32,8 +32,8 @@ r2stats = proto(
     # Menus
     aOptions = gaction(label=.$translate("Options"),handler=.$editOptions)
     aClose   = gaction(label=.$translate("Quit"),icon="quit",handler=function(h,...) dispose(.$mainWindow))
-    aCalc    = gaction(label=.$translate("Probability calculator",handler=.$probCalc)
-    aUpdate  = gaction(label=.$translate("Update R2STATS",handler=.$updateR2stats)
+    aCalc    = gaction(label=.$translate("Probability calculator"),handler=.$probCalc)
+    aUpdate  = gaction(label=.$translate("Update R2STATS"),handler=.$updateR2stats)
 
     tmp = list(Session=list(options=aOptions,sep=list(separator=TRUE),quit=aClose),
                Tools  =list(calc=aCalc,update=aUpdate))
@@ -73,7 +73,7 @@ r2stats = proto(
     add(tmp,         .$libList      <- gtable(.$getLibList()),expand=TRUE)
     addhandlerclicked(.$libList,      .$updateLibDataList)
     add(g1,           tmp           <- ggroup(horizontal=FALSE),expand=TRUE)
-    add(tmp,                           glabel(.$translate("Data files"))
+    add(tmp,                           glabel(.$translate("Data files")))
     add(tmp,         .$libDataList  <- gtable(.$getLibDataList(),handler=.$loadDataLib), expand=TRUE)
     addHandlerDoubleclick(.$libDataList, handler=.$updateDFLists)
     add(listlibFrame, tmp           <- ggroup())
@@ -93,7 +93,7 @@ r2stats = proto(
     transfrm        <- gexpandgroup(.$translate("Recode and transform"),cont=gridGroup)
     # add(transfrm,   tmp             <- ggroup(horizontal=FALSE))
     tmp             <- ggroup(horizontal=FALSE,cont=transfrm)
-    add(tmp,        glabel(.$translate("With"))
+    add(tmp,        glabel(.$translate("With")))
     add(tmp,       .$currentFactor  <- gdroplist(.$translate("No factor"),handler=.$printCat))
     add(transfrm,   tmp             <- ggroup(horizontal=FALSE),expand=TRUE)
     add(tmp,        glabel(.$translate("Apply (ex. \"cat1,cat2=cat12;cat3,cat4=cat34\" or log(.)) :")))
@@ -180,7 +180,7 @@ r2stats = proto(
     addSpring(tmp)
     add(tmp,gbutton(.$translate("Clear"),handler=.$clearDVField))
 
-    add(modelFrame,frm <- gframe(.$translate"Independent variables"),horizontal=FALSE),expand=TRUE)
+    add(modelFrame,frm <- gframe(.$translate("Independent variables"),horizontal=FALSE),expand=TRUE)
     add(frm,.$fivList,expand=TRUE)
     add(frm,tmp <- ggroup())
     add(tmp,gbutton(.$translate("Add"),  handler=.$updateFIVField,action="add"))
@@ -246,7 +246,7 @@ r2stats = proto(
     layout[1,3] <- .$legendCols <- gdroplist(paste(1:10,"col."),handler=.$plotCurrentModel,action="plot")
     layout[2,1] = glabel(.$translate("X-limits"))
     layout[2,2:3] <- .$graphLimitsX <- gedit("",handler=.$plotCurrentModel,action="plot")
-    layout[3,1] = glabel(.$translate("Y-limits")
+    layout[3,1] = glabel(.$translate("Y-limits"))
     layout[3,2:3] <- .$graphLimitsY <- gedit("",handler=.$plotCurrentModel,action="plot")
     layout[4,1] <- .$translate("Selection")
     layout[4,2:3] <- .$groupList <- gdroplist(c(.$translate("All groups")),handler=.$plotCurrentModel,action="plot")
@@ -397,7 +397,7 @@ r2stats = proto(
     if(ndset==0)      { dl = data.frame(Tableau=.$translate("No table"),Description=.$translate("No description"),stringsAsFactors=FALSE) }
     else if(ndset==1) { dl = data.frame(Tableau=dl[1],  Description=dl[2],   stringsAsFactors=FALSE) }
     # else            { colnames(dl) <- .$translate(c("Tableau","Description")) }
-    colnames(dl) <- .$translate(c("Tableau","Description")
+    colnames(dl) <- .$translate(c("Tableau","Description"))
     dl
   },
   ### Update the list of available datasets upon library selection
@@ -862,7 +862,7 @@ r2stats = proto(
   updateConstrFactor = function(.,h,...) {
 
     if(.$currentDataName == .$translate("No table")) {
-      svalue(.$structList) = .$translate("No factor"))
+      svalue(.$structList) = .$translate("No factor")
       return()
     }
   

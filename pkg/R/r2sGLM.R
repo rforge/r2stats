@@ -626,7 +626,7 @@ r2sGLM = proto(
   getPriorWeights = function(.) {
     .$Rmodel$prior.weights
   },
-  ### Boolean: Has the model an intercept
+  ### Boolean: Has the model an intercept?
   hasIntercept = function(.) {
     attr(terms(.$Rmodel),"intercept")
   },
@@ -644,6 +644,10 @@ r2sGLM = proto(
     l = sapply(l,function(x) sub("cbind","",x))
     l = sapply(l,function(x) sub("\\(","",x))
     sapply(l,function(x) sub("\\)","",x))
+  },
+  ### Gettext utility for translating messages
+  translate <- function(...) {
+    gettext(..., domain="R-r2stats")
   },
   #------------------------------------------------------------------------------------------------------------------------
   #

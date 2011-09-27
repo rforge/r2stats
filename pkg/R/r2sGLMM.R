@@ -672,6 +672,10 @@ r2sGLMM = proto(
     l = sapply(l,function(x) sub("\\(","",x))
     sapply(l,function(x) sub("\\)","",x))
   },
+  ### Gettext utility for translating messages
+  translate <- function(...) {
+    gettext(..., domain="R-r2stats")
+  },
   #------------------------------------------------------------------------------------------------------------------------
   #
   #                                              ADDTIONAL TESTS AND STATISTICS

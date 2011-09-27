@@ -16,7 +16,7 @@ options(guiToolkit="RGtk2",width=160)
 require(gWidgetsRGtk2)
 require(proto)
 require(MASS)
-require(lme4)
+require(lme4a)
 require(RGtk2Extras)
 # require(ordinal)
 
@@ -30,77 +30,80 @@ r2stats = proto(
     add(.$mainWindow,bigGroup <- ggroup(horizontal=FALSE),expand=TRUE)
 
     # Menus
-    tmp = list()
-    tmp$Session$"Préférences"$handler = .$editOptions
-    tmp$Session$sep$separator = TRUE
-    tmp$Session$Quitter$handler = function(h,...) dispose(.$mainWindow)
-    tmp$Session$Quitter$icon = "quit"
-    tmp$Outils$"Calculateur de probabilités"$handler = .$probCalc
-    tmp$Outils$"Mise à jour"$handler = .$updateR2stats
-    .$menu = gmenu(tmp,cont=.$mainWindow)
+    aOptions = gaction(label=.$translate("Options"),handler=.$editOptions)
+    aClose   = gaction(label=.$translate("Quit"),icon="quit",handler=function(h,...) dispose(.$mainWindow))
+    aCalc    = gaction(label=.$translate("Probability calculator",handler=.$probCalc)
+    aUpdate  = gaction(label=.$translate("Update R2STATS",handler=.$updateR2stats)
+
+    tmp = list(Session=list(options=aOptions,sep=list(separator=TRUE),quit=aClose),
+               Tools  =list(calc=aCalc,update=aUpdate))
+
+   .$menu = gmenu(tmp,cont=.$mainWindow)
+   .$menu[1] = .$translate("Session")
+   .$menu[2] = .$translate("Tools")
 
     # Tableau d'onglets
     add(bigGroup,.$mainNotebook <- gnotebook(closebuttons=TRUE,dontCloseThese=1:5),expand=TRUE)
 
     #-------------------------------------------------- File Tab ---------------------------------------------
-    add(.$mainNotebook,   dataGroup <- ggroup(horizontal=FALSE),label="Fichiers",override.closebutton=TRUE,expand=TRUE)
+    add(.$mainNotebook,   dataGroup <- ggroup(horizontal=FALSE),label=.$translate("Files"),override.closebutton=TRUE,expand=TRUE)
     add(dataGroup,dataNb    <- gnotebook(),expand=TRUE)
 
     # Load a file from a local or remote URL
-    add(dataNb,        urlGroup     <- ggroup(horizontal=FALSE),label=" Adresse ",expand=TRUE)
-    add(urlGroup,      urlFrame     <- gframe("Charger un fichier texte local ou distant",horizontal=FALSE),expand=TRUE)
+    add(dataNb,        urlGroup     <- ggroup(horizontal=FALSE),label=.$translate("URL"),expand=TRUE)
+    add(urlGroup,      urlFrame     <- gframe(.$translate("Load a local or remote file"),horizontal=FALSE),expand=TRUE)
     add(urlFrame,      tmp          <- ggroup())
     add(tmp,          .$dataUrl     <- gedit("http://yvonnick.noel.free.fr/data/",handler=.$dataLoad),expand=TRUE)
     addhandlerchanged(.$dataUrl,.$updateDFLists)
-    add(tmp,                           gbutton(" Disque  ",handler=.$fileLoad))
-    add(urlFrame,     .$hasHeader   <- gcheckbox("Entêtes de colonnes sur la première ligne",checked=TRUE))
-    add(urlFrame,     .$hasRowNames <- gcheckbox("Noms d'observations dans la première colonne",checked=FALSE))
+    add(tmp,                           gbutton(.$translate("Browse"),handler=.$fileLoad))
+    add(urlFrame,     .$hasHeader   <- gcheckbox(.$translate("Column headers on the first row"),checked=TRUE))
+    add(urlFrame,     .$hasRowNames <- gcheckbox(.$translate("Row labels in the first column"),checked=FALSE))
     addSpring(urlFrame)
     add(urlFrame,      tmp          <- ggroup())
     addSpring(tmp)
-    add(tmp,           .$loadFromFileButton <- gbutton("  Charger  ",handler=.$dataLoad))
+    add(tmp,           .$loadFromFileButton <- gbutton(.$translate("Load"),handler=.$dataLoad))
     addHandlerClicked(.$loadFromFileButton, handler=.$updateDFLists)
 
     # Load from a library
-    add(dataNb,       libGroup      <- ggroup(horizontal=FALSE),label=" Librairie ",expand=TRUE)
-    add(libGroup,     listlibFrame  <- gframe("Charger un fichier de données depuis une librairie R",horizontal=FALSE),expand=TRUE)
+    add(dataNb,       libGroup      <- ggroup(horizontal=FALSE),label=.$translate("Package"),expand=TRUE)
+    add(libGroup,     listlibFrame  <- gframe(.$translate("Load a data file from an R package"),horizontal=FALSE),expand=TRUE)
     add(listlibFrame, g1            <- ggroup(),expand=TRUE)
     add(g1,           tmp           <- ggroup(horizontal=FALSE))
-    add(tmp,                          glabel("  Librairies disponibles  "))
+    add(tmp,                          glabel(.$translate("Available packages")))
     add(tmp,         .$libList      <- gtable(.$getLibList()),expand=TRUE)
     addhandlerclicked(.$libList,      .$updateLibDataList)
     add(g1,           tmp           <- ggroup(horizontal=FALSE),expand=TRUE)
-    add(tmp,                           glabel("Fichiers de données"))
+    add(tmp,                           glabel(.$translate("Data files"))
     add(tmp,         .$libDataList  <- gtable(.$getLibDataList(),handler=.$loadDataLib), expand=TRUE)
     addHandlerDoubleclick(.$libDataList, handler=.$updateDFLists)
     add(listlibFrame, tmp           <- ggroup())
     addSpring(tmp)
-    add(tmp,                           gbutton(" Détails ",handler=.$getDataDescription))
-    add(tmp,          .$loadFromLibButton  <- gbutton(" Charger ",handler=.$loadDataLib))
+    add(tmp,                           gbutton(.$translate("Details"),handler=.$getDataDescription))
+    add(tmp,          .$loadFromLibButton  <- gbutton(.$translate("Load"),handler=.$loadDataLib))
     addHandlerClicked(.$loadFromLibButton, handler=.$updateDFLists)
 
     svalue(dataNb) = 1
 
     #---------------------------------------------- Data grids Tab --------------------------------------
-    add(.$mainNotebook,  gridTab    <- ggroup(),label="Données",override.closebutton=TRUE,expand=TRUE)
+    add(.$mainNotebook,  gridTab    <- ggroup(),label=.$translate("Data"),override.closebutton=TRUE,expand=TRUE)
     add(gridTab,         gridGroup  <- ggroup(horizontal=FALSE), expand=TRUE)
 
     # Recode utility
-    # add(gridGroup,  transfrm        <- gexpandgroup("Recodage et transformation"))
-    transfrm        <- gexpandgroup("Recodage et transformation",cont=gridGroup)
+    # add(gridGroup,  transfrm        <- gexpandgroup(.$translate("Recode and transform")))
+    transfrm        <- gexpandgroup(.$translate("Recode and transform"),cont=gridGroup)
     # add(transfrm,   tmp             <- ggroup(horizontal=FALSE))
     tmp             <- ggroup(horizontal=FALSE,cont=transfrm)
-    add(tmp,        glabel("Avec :"))
-    add(tmp,       .$currentFactor  <- gdroplist("Aucune",handler=.$printCat))
+    add(tmp,        glabel(.$translate("With"))
+    add(tmp,       .$currentFactor  <- gdroplist(.$translate("No factor"),handler=.$printCat))
     add(transfrm,   tmp             <- ggroup(horizontal=FALSE),expand=TRUE)
-    add(tmp,        glabel("Appliquer (ex. \"cat1,cat2=cat12;cat3,cat4=cat34\" ou log(.)) :"))
+    add(tmp,        glabel(.$translate("Apply (ex. \"cat1,cat2=cat12;cat3,cat4=cat34\" or log(.)) :")))
     add(tmp,       .$toCompute      <- gedit("",width=40))
     add(transfrm,   tmp             <- ggroup(horizontal=FALSE))
-    add(tmp,        glabel("Stoquer dans :"))
-    add(tmp,       .$newVarName     <- gdroplist("Aucune",editable=TRUE))
+    add(tmp,        glabel(.$translate("Store in")))
+    add(tmp,       .$newVarName     <- gdroplist(.$translate("No variable"),editable=TRUE))
     add(transfrm,   tmp             <- ggroup(horizontal=FALSE))
     addSpring(tmp)
-    add(tmp,                           gbutton("Exécuter",handler=.$varTransform))
+    add(tmp,                           gbutton(.$translate("Run"),handler=.$varTransform))
 
     # Data grids
     add(gridGroup, .$gridNotebook   <- gnotebook(closebuttons=TRUE), expand=TRUE)
@@ -118,16 +121,16 @@ r2stats = proto(
     add(tmp,          .$openGrid  <- gdroplist(dfList,handler=.$changeDataset,action="openswitchgrid"))
     addHandlerChanged(.$openGrid,   .$updateGrid)
     add(tmp,             myicon1  <- gimage("refresh",dir="stock",handler=.$updateDFLists))
-    tooltip(myicon1) = "Cliquez pour mettre à jour la liste des tableaux disponibles en mémoire."
+    tooltip(myicon1) = .$translate("Click to update list of loaded data frames")
 
     addSpring(tmp)
-    add(tmp,                           gbutton(" Enregistrer ",handler=.$saveGrid))
+    add(tmp,                           gbutton(.$translate("Save"),handler=.$saveGrid))
 
     #-------------------------------------------------- Model Tab --------------------------------------------
-    add(.$mainNotebook,bigFrame     <- ggroup(),label="Modèles",override.closebutton=TRUE,expand=TRUE)
+    add(.$mainNotebook,bigFrame     <- ggroup(),label=.$translate("Models"),override.closebutton=TRUE,expand=TRUE)
     add(bigFrame,     .$modelPanedGroup   <- gpanedgroup(),expand=TRUE)
     add(.$modelPanedGroup,  leftGroup    <- ggroup(horizontal=FALSE),expand=TRUE)
-    add(leftGroup,     tabFrame     <- gframe("Tableau des données",horizontal=FALSE),expand=TRUE)
+    add(leftGroup,     tabFrame     <- gframe(.$translate("Active data frame"),horizontal=FALSE),expand=TRUE)
     add(tabFrame,      tmp          <- ggroup())
     add(tmp,          .$currentData <- gdroplist(dfList,handler=.$changeDataset,action="changemodeldata"),expand=TRUE)
     addhandlerchanged(.$currentData, .$updateVarList)
@@ -135,56 +138,59 @@ r2stats = proto(
     addhandlerchanged(.$currentData, .$updateWeightList)
     addhandlerchanged(.$currentData, .$updateConstrFactor)
     add(tmp,             myicon2 <-   gimage("refresh",dir="stock",handler=.$updateDFLists))
-    tooltip(myicon2) = "Cliquez pour mettre à jour la liste des tableaux disponibles en mémoire."
+    tooltip(myicon2) = .$translate("Click to update list of loaded data frames")
 
     add(tabFrame,     .$varList     <- gtable(.$getVarList(.$getDataName()),multiple=TRUE),expand=TRUE)
     
     addHandlerDoubleclick(.$varList, handler = .$updateFIVField, action = "add")
     addhandlerclicked(    .$varList, handler = .$updateVarSummary)
     
-    add(leftGroup,     varFrame <- gframe("Résumé de variable"),expand=TRUE)
-    add(varFrame,     .$varSummary  <- gtable(cbind(Attribut="Aucun",Valeur="Aucune")),expand=TRUE)
+    add(leftGroup,     varFrame <- gframe(.$translate("Variable summary")),expand=TRUE)
+    add(varFrame,     .$varSummary  <- gtable(cbind(Attribute=.$translate("None"),Value=.$translate("None"))),expand=TRUE)
+    names(.$varSummary) = .$translate(names(.$varSummary))
 
     add(.$modelPanedGroup,  rightFrame   <- ggroup(horizontal=FALSE),expand=TRUE)
-    add(rightFrame,    modelFrame   <- gframe("Définition de modèle",horizontal=FALSE),expand=TRUE)
+    add(rightFrame,    modelFrame   <- gframe(.$translate("Model definition"),horizontal=FALSE),expand=TRUE)
 
-    .$distribList = gdroplist(c("Normale","Binomiale","Poisson","Gamma","Gaussienne inverse","Multinomiale","Multinomiale ordonnée"),handler=.$updateLink)
-    .$linkLists = list(Normale      = c("Identique","Log","Inverse"),
-                       Binomiale    = c("Logit","Probit","Cauchit","Log","Cloglog"),
-                       Poisson      = c("Log","Racine","Identique"),
-                       Gamma        = c("Inverse","Log","Identique"),
-                       "Gaussienne inverse" = c("Inverse","Log","Identique","1/mu2"),
-                       Multinomiale = c("Logit", "Probit", "Cloglog", "Loglog","Cauchit", "Aranda-Ordaz", "Log-gamma"),
-            "Multinomiale ordonnée" = c("Logit", "Probit", "Cloglog", "Loglog","Cauchit", "Aranda-Ordaz", "Log-gamma"))
-    .$currentLinkList = gdroplist(.$linkLists[[svalue(.$distribList)]])
-    .$modelName = gdroplist(c("Nouveau"),editable=TRUE,handler=.$retrieveModel)
-    .$dvList  = gtext(height=64,width=120)
-    .$fivList = gtext(height=64,width=120)
+    # .$distribList = gdroplist(c("Normale","Binomiale","Poisson","Gamma","Gaussienne inverse","Multinomiale","Multinomiale ordonnée"),handler=.$updateLink)
+   .$distribList = gdroplist(.$translate(c("Gaussian","Binomial","Poisson","Gamma","Inverse gaussian")),handler=.$updateLink)
+   .$linkLists = list(Gaussian     = .$translate(c("Identique","Log","Inverse")),
+                       Binomial     = .$translate(c("Logit","Probit","Cauchit","Log","Cloglog")),
+                       Poisson      = .$translate(c("Log","Racine","Identique")),
+                       Gamma        = .$translate(c("Inverse","Log","Identique")),
+                       "Inverse gaussian" = .$translate(c("Inverse","Log","Identique","1/mu2")))
+         #              Multinomiale = c("Logit", "Probit", "Cloglog", "Loglog","Cauchit", "Aranda-Ordaz", "Log-gamma"),
+         #   "Multinomiale ordonnée" = c("Logit", "Probit", "Cloglog", "Loglog","Cauchit", "Aranda-Ordaz", "Log-gamma"))
+    names(.$linkLists) = .$translate(names(.$linkLists))
+   .$currentLinkList = gdroplist(.$linkLists[[svalue(.$distribList)]])
+   .$modelName = gdroplist(.$translate(c("New")),editable=TRUE,handler=.$retrieveModel)
+   .$dvList  = gtext(height=64,width=120)
+   .$fivList = gtext(height=64,width=120)
 
     add(modelFrame,tmp <- ggroup())
-    add(tmp,glabel("Nom du modèle"))
+    add(tmp,glabel(.$translate("Model name")))
     add(tmp,.$modelName)
     addSpring(tmp)
-    add(tmp,gbutton("Nouveau",handler=.$clearModelFields))
+    add(tmp,gbutton(.$translate("New"),handler=.$clearModelFields))
 
-    add(modelFrame,frm <- gframe("Variables dépendantes",horizontal=FALSE),expand=TRUE)
+    add(modelFrame,frm <- gframe(.$translate("Dependent variables"),horizontal=FALSE),expand=TRUE)
     add(frm,.$dvList,expand=TRUE)
     add(frm,tmp <- ggroup())
-    add(tmp,gbutton("Ajouter",handler=.$updateDVField))
+    add(tmp,gbutton(.$translate("Add"),handler=.$updateDVField))
     addSpring(tmp)
-    add(tmp,gbutton("Effacer",handler=.$clearDVField))
+    add(tmp,gbutton(.$translate("Clear"),handler=.$clearDVField))
 
-    add(modelFrame,frm <- gframe("Variables indépendantes",horizontal=FALSE),expand=TRUE)
+    add(modelFrame,frm <- gframe(.$translate"Independent variables"),horizontal=FALSE),expand=TRUE)
     add(frm,.$fivList,expand=TRUE)
     add(frm,tmp <- ggroup())
-    add(tmp,gbutton("Ajouter",  handler=.$updateFIVField,action="add"))
+    add(tmp,gbutton(.$translate("Add"),  handler=.$updateFIVField,action="add"))
     addSpring(tmp)
     add(tmp,gbutton(" + ",      handler=.$updateFIVField,action="+"))
     add(tmp,gbutton(" : ",      handler=.$updateFIVField,action=":"))
     add(tmp,gbutton(" * ",      handler=.$updateFIVField,action="*"))
     add(tmp,gbutton(" - ",      handler=.$updateFIVField,action="-"))
     add(tmp,gbutton(" () ",     handler=.$updateFIVField,action="()"))
-    add(tmp,gbutton("Fixée",    handler=.$updateFIVField,action="offset"))
+    add(tmp,gbutton(.$translate("Fixed"),    handler=.$updateFIVField,action="offset"))
     add(tmp,gbutton(" +1 ",     handler=.$updateFIVField,action="1"))
     add(tmp,gbutton(" +0 ",     handler=.$updateFIVField,action="-1"))
     addSpring(tmp)
@@ -193,64 +199,64 @@ r2stats = proto(
     add(tmp,gbutton(" (.| ) ",  handler=.$updateFIVField,action="(.|)"))
     add(tmp,gbutton(" / ",      handler=.$updateFIVField,action="/"))
     addSpring(tmp)
-    add(tmp,gbutton("Effacer",handler=.$clearFIVField))
+    add(tmp,gbutton(.$translate("Clear"),handler=.$clearFIVField))
 
     addSpring(modelFrame)
     add(modelFrame,tmp <- ggroup(),expand=TRUE)
     addSpring(tmp)
     add(tmp,layout <- glayout(homogeneous=FALSE),expand=TRUE)
-    layout[1,1] = glabel(" Loi de distribution ")
-    layout[1,2] = glabel("   Fonction de lien   ")
-    layout[1,3] = glabel("Variable de pondération")
-    layout[1,4] = glabel(" Facteur de contrainte ")
+    layout[1,1] = glabel(.$translate("Distribution family"))
+    layout[1,2] = glabel(.$translate("Link function"))
+    layout[1,3] = glabel(.$translate("Weighting variable"))
+    layout[1,4] = glabel(.$translate("Constraint factor"))
     layout[2,1] =  .$distribList
     layout[2,2] =  .$currentLinkList
-    layout[2,3] <- .$weightList <- gdroplist(c("Aucune",.$getNumVarList(.$getCurrentDataName())))
-    layout[2,4] <- .$structList <- gdroplist(c("Aucun","Constant",.$getCatVarList(.$getCurrentDataName())))
-    layout[3,1] = glabel("Sélection obs.")
+    layout[2,3] <- .$weightList <- gdroplist(c(.$translate("No variable"),.$getNumVarList(.$getCurrentDataName())))
+    layout[2,4] <- .$structList <- gdroplist(c(.$translate("None"),.$translate("Constant"),.$getCatVarList(.$getCurrentDataName())))
+    layout[3,1] = glabel(.$translate("Observation selection"))
     layout[3,2:4] <- .$subsetVar <- gedit("")
     addSpring(tmp)
 
     add(rightFrame,tmp <- ggroup())
     addSpring(tmp)
-    add(tmp,gbutton("Estimer",handler=.$run))
+    add(tmp,gbutton(.$translate("Estimate"),handler=.$run))
 
     #------------------------------------------------ Result Tab ------------------------------------------
-    add(.$mainNotebook,resBigFrame <- ggroup(horizontal=FALSE),override.closebutton=TRUE,label="Résultats")
+    add(.$mainNotebook,resBigFrame <- ggroup(horizontal=FALSE),override.closebutton=TRUE,label=.$translate("Résultats"))
     add(resBigFrame,.$results <- gtext(wrap=FALSE),expand=TRUE)
     add(resBigFrame,tmp <- ggroup())
-    add(tmp,gbutton("Effacer",handler=.$clearResults))
+    add(tmp,gbutton(.$translate("Clear"),handler=.$clearResults))
 
     #------------------------------------------------- Plot Tab -----------------------------------------
-    add(.$mainNotebook,  graphBigFrame   <- ggroup(),override.closebutton=TRUE,label="Graphiques")
+    add(.$mainNotebook,  graphBigFrame   <- ggroup(),override.closebutton=TRUE,label=.$translate("Plots"))
     add(graphBigFrame,  .$graphPanedGroup <- gpanedgroup(),expand=TRUE)
     add(.$graphPanedGroup, graphLeftGroup  <- ggroup(horizontal=FALSE),expand=TRUE)
-    add(graphLeftGroup,                     glabel("Type de graphique :"))
-    add(graphLeftGroup, .$plotType       <- gdroplist(c("Graphique de régression","Distribution de la réponse","Valeurs prévues et observées","Graphique quantile-quantile","Distribution des résidus","Prévisions et résidus"),handler=.$plotCurrentModel,action="plot"))
+    add(graphLeftGroup,                     glabel(.$translate("Plot type")))
+    add(graphLeftGroup, .$plotType       <- gdroplist(.$translate(c("Graphique de régression","Distribution de la réponse","Valeurs prévues et observées","Graphique quantile-quantile","Distribution des résidus","Prévisions et résidus")),handler=.$plotCurrentModel,action="plot"))
     add(graphLeftGroup,  graphNb         <- gnotebook(), expand=TRUE)
-    add(graphNb,         graphModelGroup <- ggroup(horizontal=FALSE),label=" Modèle ",expand=TRUE)
+    add(graphNb,         graphModelGroup <- ggroup(horizontal=FALSE),label=.$translate("Model"),expand=TRUE)
     add(graphModelGroup,.$graphModelList <- gtable(.$getModelList()),expand=TRUE)
     addhandlerclicked(  .$graphModelList,  .$plotCurrentModel,action="plot")
-    add(graphNb,         graphParamGroup <- ggroup(horizontal=FALSE),label=" Options ",expand=TRUE)
+    add(graphNb,         graphParamGroup <- ggroup(horizontal=FALSE),label=.$translate("Options"),expand=TRUE)
     add(graphParamGroup,layout <- glayout())
     
-    layout[1,1] = glabel("Légende")
-    layout[1,2] <- .$legendLoc <- gdroplist(c("Aucune","A droite","A gauche","En haut","En bas"),handler=.$plotCurrentModel,action="plot")
+    layout[1,1] = glabel(.$translate("Légende"))
+    layout[1,2] <- .$legendLoc <- gdroplist(.$translate(c("Aucune","A droite","A gauche","En haut","En bas")),handler=.$plotCurrentModel,action="plot")
     svalue(.$legendLoc,index=TRUE) = 2
     layout[1,3] <- .$legendCols <- gdroplist(paste(1:10,"col."),handler=.$plotCurrentModel,action="plot")
-    layout[2,1] = glabel("Limites X")
+    layout[2,1] = glabel(.$translate("X-limits"))
     layout[2,2:3] <- .$graphLimitsX <- gedit("",handler=.$plotCurrentModel,action="plot")
-    layout[3,1] = glabel("Limites Y")
+    layout[3,1] = glabel(.$translate("Y-limits")
     layout[3,2:3] <- .$graphLimitsY <- gedit("",handler=.$plotCurrentModel,action="plot")
-    layout[4,1] <- "Sélection"
-    layout[4,2:3] <- .$groupList <- gdroplist(c("Tous groupes"),handler=.$plotCurrentModel,action="plot")
-    layout[5,1] <- glabel("Ajouter")
-    layout[5,2:3] <- .$addData <- gcheckbox("Données",checked=TRUE,handler=.$plotCurrentModel,action="plot")
-    layout[6,2:3] <- .$addModel <- gcheckbox("Modèle",checked=TRUE,handler=.$plotCurrentModel,action="plot")
-    layout[7,2:3] <- .$addRandCurves <- gcheckbox("Courbes aléatoires",checked=TRUE,handler=.$plotCurrentModel,action="plot")
-    layout[8,2:3] <- .$addRefLine <- gcheckbox("Droite de référence",handler=.$plotCurrentModel,action="plot")
-    layout[9,2:3] <- .$addGrid <- gcheckbox("Grille",handler=.$plotCurrentModel,action="plot")
-    layout[10,2:3] <- .$addNoise <- gcheckbox("Bruitage",handler=.$plotCurrentModel,action="plot")
+    layout[4,1] <- .$translate("Selection")
+    layout[4,2:3] <- .$groupList <- gdroplist(c(.$translate("All groups")),handler=.$plotCurrentModel,action="plot")
+    layout[5,1] <- glabel(.$translate("Add"))
+    layout[5,2:3] <- .$addData <- gcheckbox(.$translate("Data"),checked=TRUE,handler=.$plotCurrentModel,action="plot")
+    layout[6,2:3] <- .$addModel <- gcheckbox(.$translate("Model"),checked=TRUE,handler=.$plotCurrentModel,action="plot")
+    layout[7,2:3] <- .$addRandCurves <- gcheckbox(.$translate("Random curves"),checked=TRUE,handler=.$plotCurrentModel,action="plot")
+    layout[8,2:3] <- .$addRefLine <- gcheckbox(.$translate("Reference line"),handler=.$plotCurrentModel,action="plot")
+    layout[9,2:3] <- .$addGrid <- gcheckbox(.$translate("Grid"),handler=.$plotCurrentModel,action="plot")
+    layout[10,2:3] <- .$addNoise <- gcheckbox(.$translate("Noise"),handler=.$plotCurrentModel,action="plot")
     
     add(.$graphPanedGroup,graphRightGroup <- ggroup(horizontal=FALSE),expand=TRUE)
     add(graphRightGroup,.$plotArea <- ggraphics())
@@ -261,22 +267,22 @@ r2stats = proto(
     addSpring(tmp)
     add(tmp,.$obsId <- glabel(""))
     addSpring(tmp)
-    add(tmp,gbutton("  Enregistrer  ", handler=.$savePlot,action="save"))
-    add(tmp,gbutton("     Copier    ", handler=.$copyPlot,action="save"))
-    add(tmp,gbutton("   Réafficher   ",handler=.$plotCurrentModel,action="plot"))
+    add(tmp,gbutton(.$translate("Save"), handler=.$savePlot,action="save"))
+    add(tmp,gbutton(.$translate("Copy"), handler=.$copyPlot,action="save"))
+    add(tmp,gbutton(.$translate("Replot"),handler=.$plotCurrentModel,action="plot"))
 
     #--------------------------------------------------- Model comparison tab -------------------------------------
-    add(.$mainNotebook,compBigFrame <- ggroup(horizontal=FALSE),override.closebutton=TRUE,label="Comparaisons")
-    add(compBigFrame,modelGroup <- gframe("Modèles testés"),expand=TRUE,horizontal=FALSE)
+    add(.$mainNotebook,compBigFrame <- ggroup(horizontal=FALSE),override.closebutton=TRUE,label=.$translate("Comparaisons"))
+    add(compBigFrame,modelGroup <- gframe(.$translate("Fitted models")),expand=TRUE,horizontal=FALSE)
     add(modelGroup,.$modelList <- gtable(.$getModelList(),multiple=TRUE),expand=TRUE)
     add(compBigFrame,tmp <- ggroup())
-    add(tmp,gbutton("Supprimer",handler=.$deleteModels))
+    add(tmp,gbutton(.$translate("Delete"),handler=.$deleteModels))
     addSpring(tmp)
-    add(tmp,gbutton("Tout sélectionner",handler=.$selectAllModels))
-    add(tmp,gbutton("Comparer",handler=.$compareModels))
+    add(tmp,gbutton(.$translate("Select all"),handler=.$selectAllModels))
+    add(tmp,gbutton(.$translate("Compare"),handler=.$compareModels))
 
     # Status bar
-    add(bigGroup,.$status <- gstatusbar("Prêt."))
+    add(bigGroup,.$status <- gstatusbar(.$translate("Status: Ready.")))
 
     # Global variables
     .$currentPlot.XY = NULL
@@ -285,7 +291,7 @@ r2stats = proto(
   show = function(.) {
 
     if(is.null(.$mainWindow)) {
-      gmessage("Erreur : l'interface n'est pas créée.")
+      gmessage(.$translate("Erreur : l'interface n'est pas créée."))
       return()
     }
     
@@ -314,7 +320,12 @@ r2stats = proto(
     # Under W32
     if(Sys.info()["sysname"] == "Windows") invisible(file.choose())
     # Under Linux
-    else   invisible(gfile(text="Sélecteur de fichier",type=type,filter=list("Tous"=list(patterns = c("*")))))
+    else   {
+      filter = list("All"=list(patterns = c("*")))
+      names(filter) = .$translate("All")
+
+      invisible(gfile(text=.$translate("File selector"),type=type,filter=filter))
+    }
   },
   ### Data file selection (from local disk)
   fileLoad = function(.,h,...) {
@@ -338,7 +349,7 @@ r2stats = proto(
     if(is.na(filename)) return()
     if(filename == "")  return()
     
-    .$setStatus("Statut : téléchargement du fichier en cours. Veuillez patienter....")
+    .$setStatus(.$translate("Status: Download in progress. Please wait..."))
 
     # Extract file extension
     name.ext = .$getFileExtension(filename)
@@ -350,8 +361,8 @@ r2stats = proto(
     else                           res = try(assign(tabname,read.table(filename,header=svalue(.$hasHeader),row.names=r.names),envir = .GlobalEnv))
     
     if(inherits(res,"try-error")) {
-      gmessage("Erreur de chargement : le serveur est\n peut-étre indisponible ou le\n nom du fichier incorrect.\n")
-     .$setStatus("Statut : Prêt.")
+      gmessage(.$translate("Download failure: The server might be down\nor the file name incorrect.\n"))
+     .$setStatus(.$translate("Status: Ready."))
       return()
     }
 
@@ -369,7 +380,7 @@ r2stats = proto(
     # Switch to data grid tab
     svalue(.$mainNotebook) = 2
 
-   .$setStatus("Statut : Prêt.")
+   .$setStatus(.$translate("Status: Ready."))
 
   },
   ### Get the list of installed libraries
@@ -383,9 +394,10 @@ r2stats = proto(
     if(is.matrix(dl)) ndset = nrow(dl)
     if(is.vector(dl)) ndset = 1        # data() doesn't return a matrix when there is only one dataset!
 
-    if(ndset==0)      { dl = data.frame(Tableau="Aucun",Description="Aucune",stringsAsFactors=FALSE) }
+    if(ndset==0)      { dl = data.frame(Tableau=.$translate("No table"),Description=.$translate("No description"),stringsAsFactors=FALSE) }
     else if(ndset==1) { dl = data.frame(Tableau=dl[1],  Description=dl[2],   stringsAsFactors=FALSE) }
-    else              { colnames(dl) <- c("Tableau","Description") }
+    # else            { colnames(dl) <- .$translate(c("Tableau","Description")) }
+    colnames(dl) <- .$translate(c("Tableau","Description")
     dl
   },
   ### Update the list of available datasets upon library selection
@@ -400,12 +412,12 @@ r2stats = proto(
     cl = class(eval(parse(text=tabname),envir=.GlobalEnv))
 
     if(cl != "data.frame")	{
-      gmessage(paste("Ce tableau est de type",cl,"\net ne peut étre édité dans l\'interface.\nIl a néamoins été chargé en mémoire."))
+      gmessage(.$translate("This table class cannot be edited in the GUI.\nIt has nevertheless been loaded in memory."))
       return()
     }
 	
     # Set to current data
-    .$currentDataName = tabname
+   .$currentDataName = tabname
         
     # Switch to the datagrid tab
     svalue(.$mainNotebook) = 2
@@ -413,12 +425,14 @@ r2stats = proto(
   ### Get the vector of level names in a given categorical variable in a data table
   getFacLevelList = function(.,dataname,varname) {
 
-     level.names = "Aucune"
+     level.names = .$translate("None")
      datatab = eval(parse(text=dataname),envir=.GlobalEnv)
      if(is.factor(datatab[,varname]))    level.names = levels(datatab[,varname])
      if(is.character(datatab[,varname])) level.names = sort(unique(datatab[,varname]))
      
-     cbind("Modalités"=level.names)
+     l = cbind(Levels=level.names)
+     names(l) = .$translate("Levels")
+     l
   },
   ### Display the help file about this dataset
   getDataDescription = function(.,h,...) {
@@ -449,7 +463,7 @@ r2stats = proto(
     available.tables = get_all_tables()
 
     if(is.null(available.tables)) {
-      available.tables = "Aucun tableau"
+      available.tables = .$translate("No table")
       nt = 0
       return()
     }
@@ -462,7 +476,7 @@ r2stats = proto(
     .$currentData[] = available.tables
     svalue(.$currentData) = .$currentDataName
     
-    .$setStatus(paste("Statut :",nt,"tableau(x) dans l'espace de travail."))
+    .$setStatus(paste(.$translate("Statut :"),nt,.$translate("table(s) in workspace.")))
   },
   ### Update the data grids upon grid selector change
   updateGrid = function(.,h,...) {
@@ -473,14 +487,14 @@ r2stats = proto(
     if(is.null(dataName)) return()
     
     # No available table in working memory
-    if(dataName == "Aucun tableau") return()
+    if(dataName == .$translate("No table")) return()
     
     # Which tables are already displayed?
     displayed.grids = names(.$gridNotebook)
     
     # None: Open the table
     if(is.null(displayed.grids)) {
-      .$showData(dataName)
+     .$showData(dataName)
       return()
     }
     
@@ -509,8 +523,8 @@ r2stats = proto(
     # Current data  table and variables
     dataname = displayed.grids[svalue(.$gridNotebook)]
     varList = .$getVarList(dataname)
-    varTypes = varList[,"Type"]
-    names(varTypes) = varList[,"Variables"]
+    varTypes = varList[,.$translate("Type")]
+    names(varTypes) = varList[,.$translate("Variables")]
 
     transExp = .$trim(svalue(.$toCompute))
     if(transExp == "") return()
@@ -519,7 +533,7 @@ r2stats = proto(
     destVar   = svalue(.$newVarName)
     sourceAccess = paste(dataname,"[,'",sourceVar,"']",sep="")
     destAccess = paste(dataname,"[,'",destVar,"']",sep="")
-    source.isFactor = varTypes[sourceVar] == "F"
+    source.isFactor = varTypes[sourceVar] == .$translate("F")
     
     # RECODING
     if(source.isFactor) {
@@ -532,7 +546,7 @@ r2stats = proto(
         com = .$removeSpaces(com)
         arguments = unlist(strsplit(com,"="))
         if(length(arguments) != 2) {
-          gmessage("Problème dans la définition des commandes.")
+          gmessage("Syntax problem in your command.")
           return()
         }
 	      sourceCat = unlist(strsplit(arguments[1],","))
@@ -637,7 +651,7 @@ r2stats = proto(
     # Extract file extension
     name.ext = tolower(.$fileExtension(filename))
     if(name.ext != "csv") {
-      gmessage("L\'enregistrement ne peut se faire \nqu\'au format CSV")
+      gmessage(.$translate("Files may only be saved in CSV format."))
       return()
     }
     
@@ -645,7 +659,7 @@ r2stats = proto(
 
     res = try(write.csv2(tabname,file=filename,row.names=FALSE))
     if(inherits(res,"try-error")) {
-      gmessage("Erreur lors de l'écriture du fichier.")
+      gmessage("Write error while saving the file.")
       return()
     }
     
@@ -661,16 +675,16 @@ r2stats = proto(
     
     res = try(write.csv2(eval(parse(text=dataname),envir=.GlobalEnv),file=filename,row.names=FALSE))
     if(inherits(res,"try-error")) {
-      gmessage("Erreur lors de l'écriture du fichier.")
+      gmessage(.$translate("Write error while saving the file."))
       return()
     }
 
-    .$setStatus(paste("Statut : fichier '",filename,"' correctement sauvegardé."))
+    .$setStatus(.$translate("Status: CSV file successfully written to disk."))
   },
   ### Update data view in the datagrid tab
   showData = function(.,dataname) {
 
-    if(!length(dataname) || (dataname == "Aucun tableau")) return()
+    if(!length(dataname) || (dataname == .$translate("No table"))) return()
     displayed.grids = names(.$gridNotebook)
 
     # Position of the new tab
@@ -683,7 +697,7 @@ r2stats = proto(
       dispose(.$gridNotebook)
     }
     
-   .$setStatus("Statut : affichage des données. Veuillez patienter....")
+   .$setStatus(.$translate("Status: Data loading in progress. Please wait..."))
     
     # Add a new page to gridNotebook
     add(.$gridNotebook,tmp <- ggroup(),label = dataname,index=pos,expand=TRUE)
@@ -702,7 +716,7 @@ r2stats = proto(
     svalue(.$currentFactor,index=TRUE) = 2
     svalue(.$newVarName,index=TRUE) = 2
 
-    .$setStatus("Statut : Prêt.")
+    .$setStatus(.$translate("Status: Ready."))
 
   },
   ### Called when a data grid is closed
@@ -773,26 +787,35 @@ r2stats = proto(
     }
     
   },
-  ### Get the variable names and types list in a given data frame
+  ### Get the variable names and types list in a data frame
   getVarList = function(.,dataname,type=TRUE) {
 
-    if(!length(dataname) || (dataname == "") || (dataname == "Aucun tableau")) {
-      return(data.frame(Variables="Aucune variable",Type="-"))
+    if(!length(dataname) || (dataname == "") || (dataname == .$translate("No table"))) {
+      vl = data.frame(Variables=.$translate("No variable"),Type="-")
+      names(vl) = .$translate(names(vl))
+      return(vl)
     }
     
     dataFrame = eval(parse(text=dataname),envir=.GlobalEnv)
     vList = colnames(dataFrame)
     varType = with(dataFrame,sapply(vList,function(x) is.numeric(eval(parse(text=x)))))
 
-    if(type) return(cbind(Variables=vList,Type=ifelse(varType,"N","F")))
-    else     return(cbind(Variables=vList))
+    if(type) {
+      vl = cbind(Variables=vList,Type=ifelse(varType,.$translate("N"),.$translate("F")))
+      return(vl)
+    }
+    else {
+      vl = cbind(Variables=vList)
+      names(vl) = .$translate(names(vl))
+      return(vl)
+    }
   },
   ### Get the vector of numeric variable names in the current dataframe
   getNumVarList = function(.,dataname) {
 
     if(!length(dataname)) return()
     if(dataname == "")    return()
-    if(dataname == "Aucun tableau") return(NULL)
+    if(dataname == .$translate("No table")) return(NULL)
 
     dataFrame = eval(parse(text=dataname),envir=.GlobalEnv)
     vList = colnames(dataFrame)
@@ -804,7 +827,7 @@ r2stats = proto(
 
     if(!length(dataname)) return()
     if(dataname == "")    return()
-    if(dataname == "Aucun tableau") return(NULL)
+    if(dataname == .$translate("No table")) return(NULL)
 
     dataFrame = eval(parse(text=dataname),envir=.GlobalEnv)
     vList = colnames(dataFrame)
@@ -814,7 +837,7 @@ r2stats = proto(
   ### Update the variable list
   updateVarList = function(.,h,...) {
 
-    if(.$currentDataName == "Aucun tableau") return()
+    if(.$currentDataName == .$translate("No table")) return()
 
     # Update main variable list
     variables = .$getVarList(.$currentDataName)
@@ -824,29 +847,29 @@ r2stats = proto(
   ### Update the weighting variable list
   updateWeightList = function(.,h,...) {
 
-    if(.$currentDataName == "Aucun tableau") {
-      svalue(.$weightList) = "Aucune"
+    if(.$currentDataName == .$translate("No table")) {
+      svalue(.$weightList) = .$translate("No variable")
       return()
     }
   
     variables = .$getNumVarList(.$currentDataName)
     weightVar = svalue(.$weightList)
-    .$weightList[] = c("Aucune",variables)
-    if(!weightVar %in% .$weightList[]) svalue(.$weightList) = "Aucune"
+   .$weightList[] = c(.$translate("No variable"),variables)
+    if(!weightVar %in% .$weightList[]) svalue(.$weightList) = .$translate("No variable")
     else svalue(.$weightList) = weightVar  
   },
   ### Update the constraint factor list
   updateConstrFactor = function(.,h,...) {
 
-    if(.$currentDataName == "Aucun tableau") {
-      svalue(.$structList) = "Aucun"
+    if(.$currentDataName == .$translate("No table")) {
+      svalue(.$structList) = .$translate("No factor"))
       return()
     }
   
     variables = .$getCatVarList(.$currentDataName)
     structVar = svalue(.$structList)
-    .$structList[] = c("Aucun","Constant",variables)
-    if(!structVar %in% .$structList[]) svalue(.$structList) = "Aucun"
+   .$structList[] = c(.$translate("No factor"),.$translate("Constant"),variables)
+    if(!structVar %in% .$structList[]) svalue(.$structList) = .$translate("No factor")
     else svalue(.$structList) = structVar  
   },
   ### Update the variable summary each time a variable name is clicked
@@ -858,25 +881,28 @@ r2stats = proto(
 
     # No variable name selected
     if(!length(currentVar) || is.na(currentVar)) {
-     .$varSummary[,] = data.frame(Attribut="Aucun",Valeur="Aucune",stringsAsFactors=FALSE)
+     .$varSummary[,] = data.frame(Attribute=.$translate("None"),Value=.$translate("None"),stringsAsFactors=FALSE)
+      names(.$varSummary) = .$translate(names(.$varSummary))
       return()
     }
     
     varContent = eval(parse(text=paste(.$getDataName(),"[,'",currentVar,"']",sep="")),envir=.GlobalEnv)
 
     # A factor is selected
-    if(varType == 'F') {
+    if(varType == .$translate("F")) {
       vs = table(varContent)
-      cn = c(names(vs),"Manquantes","Total")
+      cn = c(names(vs),.$translate("Missing"),.$translate("Total"))
       vs = c(as.vector(vs),sum(is.na(varContent)),length(varContent))
-     .$varSummary[,] = cbind(Attribut=cn,Valeur=vs)
+     .$varSummary[,] = cbind(Attribute=cn,Value=vs)
+      names(.$varSummary) = .$translate(names(.$varSummary))
     }
     
     # A numeric variable
-    else if(varType == 'N') {
+    else if(varType == .$translate("N")) {
       Q = quantile(varContent,probs=c(0,.25,.5,.75,1),na.rm=TRUE)
-     .$varSummary[,] = cbind(Attribut=c("Min.","1er Quart.","Médiane","Moyenne","3ème Quart.","Max.","Ecart-type","Obs.","Manquantes"),
-                             Valeur=round(c(Q[1],Q[2],Q[3],mean(varContent,na.rm=TRUE),Q[4],Q[5],sd(varContent,na.rm=TRUE),length(varContent),sum(is.na(varContent))),4))
+     .$varSummary[,] = cbind(Attribute=.$translate(c("Min.","1er Quart.","Médiane","Moyenne","3ème Quart.","Max.","Ecart-type","Total","Manquantes")),
+                             Value=round(c(Q[1],Q[2],Q[3],mean(varContent,na.rm=TRUE),Q[4],Q[5],sd(varContent,na.rm=TRUE),length(varContent),sum(is.na(varContent))),4))
+      names(.$varSummary) = .$translate(names(.$varSummary))
     }
   },
 
@@ -907,7 +933,7 @@ r2stats = proto(
     svalue(.$fivList) = .$models[[modname]]$ivField
     svalue(distribList,index=TRUE) = .$models[[modname]]$family
     svalue(currentLinkList,index=TRUE) = .$models[[modname]]$link
-    svalue(weightList) = ifelse(.$models[[modname]]$weights=="NULL","Aucune",.$models[[modname]]$weights)
+    svalue(weightList) = ifelse(.$models[[modname]]$weights=="NULL",.$translate("None"),.$models[[modname]]$weights)
     svalue(subsetVar) = ifelse(.$models[[modname]]$subset=="NULL", "",.$models[[modname]]$subset)
     svalue(structList) = .$models[[modname]]$constrFactor
   },
@@ -1043,7 +1069,7 @@ r2stats = proto(
     fterms = unlist(strsplit(.$removeSpaces(.$ivField)),"+",fixed=TRUE)
     which.rand = grep("|",fterms,fixed=TRUE)
     if(length(which.rand)>1) {
-      gmessage("Un seul facteur aléatoire n'est possible.")
+      gmessage("Only one random factor is accepted.")
       return("error")
     }
     
@@ -1074,7 +1100,7 @@ r2stats = proto(
   },
   ### Get the active R2STATS model
   getCurrentModel = function(.,h,...) {
-    if(.$currentModelName == "Aucun") return("Aucun")
+    if(.$currentModelName == .$translate("None")) return(.$translate("None"))
     .$models[[.$currentModelName]]
   },
   ### Get a named R2STATS model
@@ -1127,7 +1153,7 @@ r2stats = proto(
   ### Get the name of weighting variable
   getWeights = function(.) {
     weights = svalue(.$weightList)
-    if(weights == "Aucune") return("NULL")
+    if(weights == .$translate("No variable")) return("NULL")
     weights
   },
   ### Get constraint factor
@@ -1143,20 +1169,20 @@ r2stats = proto(
     ##------------------------------- Some checks about model specs
     
     # No model name provided
-    if(modname %in% c("","Nouveau")) {
-      gmessage("Vous devez spécifier un nom de modèle.")
+    if(modname %in% c("",.$translate("New"))) {
+      gmessage(.$translate("Please give a name for this model."))
       return()
     }
 
     # Don't give the model the dataframe name
     if(modname == tableau) {
-      gmessage("Vous ne pouvez donner au modèle\nle nom du tableau de données.")
+      gmessage(.$translate("You can't give the same name to both data and model."))
       return()
     }
 	
     # This model name already exists
     if(modname %in% .$getModelNames()) {
-      if(!gconfirm("Un modèle du même nom existe déjà.\nVoulez-vous l\'écraser ?")) {
+      if(!gconfirm(.$translate("This model already exists.\nDo you want to replace it?"))) {
         return()
       }
     }
@@ -1164,7 +1190,7 @@ r2stats = proto(
     # Check dependent variable field
     vd = .$getDVField()
     if(!nchar(vd)) {
-      gmessage("Vous devez spécifier au moins une VD.")
+      gmessage(.$translate("You must specify at least one dependent variable."))
       return()
     }
 
@@ -1177,7 +1203,7 @@ r2stats = proto(
     # Do variables exist?
     listvar = .$getVarList(tableau,type=FALSE)   
     if(!all(.$getModelVars() %in% listvar)) {
-      gmessage("Erreur : l\'une des variables invoquées n\'existe pas.")
+      gmessage(.$translate("Error: One of the variables does not exist."))
       return()
     }
     
@@ -1188,7 +1214,7 @@ r2stats = proto(
 
     current.data = eval(parse(text=tableau),envir=.GlobalEnv)
     if( (length(ndv)==1) && is.factor(current.data[,vds]) && ( !(distr %in% c(2,6,7))) ) {
-      gmessage("Cette distribution ne convient pas\npour une variable catégorisée.")
+      gmessage(.$translate("This distribution is not suited\nfor a categorical variable."))
       return()
     }
 
@@ -1200,7 +1226,7 @@ r2stats = proto(
     if(.$trim(subset) == "") subset = "NULL"
     
     weights = .$getWeights()
-    if(weights == "Aucune") weights = "NULL"
+    if(weights == .$translate("No variable")) weights = "NULL"
     
     constrFactor = .$getConstrFactor()
 
@@ -1237,7 +1263,7 @@ r2stats = proto(
 	      # Binomial with success/failure counts in two columns
 	      else if(distr==2) {
 	        if(ndv>2) {
-	          gmessage("Pour un modèle binomial, les comptages doivent\nêtre présentés en deux colonnes.")
+	          gmessage(.$translate("For a binomial model, counts\nmust appear in two columns."))
 	          return()
 	        }
           model = r2sGLM$new(name=modname,class="glm",func="glm",dvField=vd,dv=vds,ivField=vif,iv=vifs,data=tableau,
@@ -1261,7 +1287,7 @@ r2stats = proto(
     # Model estimation
     res = model$estimate()
     if(inherits(res,"try-error")) {
-      r2stats$setStatus("Statut : Prêt.")
+      r2stats$setStatus(.$translate("Status: Ready."))
       return()
     }
     
@@ -1279,7 +1305,7 @@ r2stats = proto(
    .$updateModelList(h)
        
     # Update list of available plots (if necessary)
-    r2stats$setStatus("Statut : construction des graphiques....")
+    r2stats$setStatus(.$translate("Status: Building plots..."))
     possiblePlots = model$getAvailablePlots()
     lastPlotType = svalue(.$plotType)
     if(any(.$plotType[,] != possiblePlots)) {
@@ -1293,7 +1319,7 @@ r2stats = proto(
     svalue(.$graphModelList,index=TRUE) = whichToPlot
 
     # Switch to result tab
-    r2stats$setStatus("Statut : Prêt.")
+    r2stats$setStatus(.$translate("Status: Ready."))
     svalue(.$mainNotebook) = 4
   },
   #------------------------------------------------------------------------------------------------------------------------
@@ -1403,7 +1429,7 @@ r2stats = proto(
   emptyPlot = function(.) {
     xyplot(1:5~1:5,type="n",bty="n",scales=list(draw=F),xlab="",ylab="",
            panel = function(x,y,...) {
-             panel.text(3,3,"Pas de graphique disponible.")
+             panel.text(3,3,.$translate("No plot available."))
            })
     # Ajouter texte : "Pas de graphique disponible.")
   },
@@ -1434,7 +1460,7 @@ r2stats = proto(
 
     if(graph.xlim != "") {
       if(length(grep(",",graph.xlim))) {
-        gmessage("Veuillez utiliser le point comme séparateur décimal\n et l\'espace comme séparateur de valeurs.")
+        gmessage(.$translate("Please use the dot as the decimal separator\nand a blank space as a value separator."))
       }
       else {
         xlim = as.numeric(unlist(strsplit(graph.xlim,split=" ")))
@@ -1451,7 +1477,7 @@ r2stats = proto(
 
     if(graph.ylim != "") {
       if(length(grep(",",graph.ylim))) {
-        gmessage("Veuillez utiliser le point comme séparateur décimal\n et l\'espace comme séparateur de valeurs.")
+        gmessage(.$translate("Please use the dot as the decimal separator\nand a blank space as a value separator."))
       }
       else {
         ylim = as.numeric(unlist(strsplit(graph.ylim,split=" ")))
@@ -1497,14 +1523,14 @@ r2stats = proto(
   ### Copy plot in clipboard
   copyPlot = function(.,h,...) {
     if(Sys.info()["sysname"] != "Windows") {
-      gmessage("Fonction disponible sous Windows uniquement.")
+      gmessage("This function is only available under Windows.")
     	return()
     }
     
     win.metafile()
    .$plotCurrentModel(h,...)
     dev.off()
-    gmessage("Le graphique est copié en mémoire-tampon.\nVous pouvez le coller dans un autre programme.")
+    gmessage("The graph has been saved to clipboard.")
   },
   #------------------------------------------------------------------------------------------------------------------------
   #
@@ -1514,7 +1540,11 @@ r2stats = proto(
   ### Return the full list of all R2STATS models and their main attributes
   getModelList = function(.) {
 
-    if(!length(.$models)) return(data.frame(Nom="Aucun modèle",Formule="Aucune formule",Contrainte="Aucun",Distribution="Non spécifiée",Lien="Non spécifié",stringsAsFactors=FALSE))
+    if(!length(.$models)) {
+      df = data.frame(Name=.$translate("No model"),Formula=.$translate("No formula"),Constraint=.$translate("No factor"),Distribution=.$translate("Unspecified"),Link=.$translate("Unspecified"),stringsAsFactors=FALSE)
+      names(df) = .$translate(names(df))
+      return(df)
+    }
 
     mnames = sapply(.$models, function(model) model$getName())
     formul = sapply(.$models, function(model) model$getFormula())
@@ -1523,7 +1553,9 @@ r2stats = proto(
     distr  = names(.$linkLists)[distr]
     link   = sapply(.$models, function(model) .$linkLists[[model$getFamilyAsIndex()]][model$getLinkAsIndex()])
 
-    cbind(Nom=mnames,Formule=formul,Contrainte=constr,Distribution=distr,Lien=link)
+    df = cbind(Name=mnames,Formula=formul,Constraint=constr,Distribution=distr,Link=link)
+    names(df) = .$translate(names(df))
+    return(df)
   },
   ### Update model list in tab 5
   updateModelList = function(.,h,...) {
@@ -1537,8 +1569,8 @@ r2stats = proto(
    
     # Vector of selected model names
     modelsToDelete = svalue(.$modelList)
-    if(!length(modelsToDelete) || (modelsToDelete == "Aucun modèle")) {
-      .$currentModelName = "Aucun"
+    if(!length(modelsToDelete) || (modelsToDelete == .$translate("No model"))) {
+      .$currentModelName = .$translate("None")
       return()
     }
     
@@ -1553,7 +1585,7 @@ r2stats = proto(
   },
   ### Select all entries in R2STATS model list (tab 5)
   selectAllModels = function(.,h,...) {
-    if(.$modelList[1,1]=="Aucun modèle") return()
+    if(.$modelList[1,1]==.$translate("No model")) return()
     nmodels = nrow(as.data.frame(.$modelList[,]))
     svalue(.$modelList,index=TRUE) = 1:nmodels
   },
@@ -1581,14 +1613,14 @@ r2stats = proto(
     # Do model have the same dependent variable?
     same.depvar = length(unique(dvs)) == 1
     if(!same.depvar) {
-      gmessage("Les modèles ne portent pas sur la même variable dépendante.\nLa comparaison n\'a pas de sens.")
+      gmessage(.$translate("The dependent variable is not the same across these models.\nThe comparison is meaningless."))
       return()
     }
 
     # Do models bear upon the same number of observations?
     same.size = length(unique(sizes)) == 1
     if(!same.size) {
-      gmessage("Les modèles ne portent pas sur le même\n sous-ensemble d'observations.")
+      gmessage(.$translate("These models do not bear upon the same observation set."))
       return()
     }
     
@@ -1603,9 +1635,9 @@ r2stats = proto(
     Dfs      = sapply(.$models[comp], function(m) m$df())
 
     # Print titles
-    add(.$results,"Comparaison et résumé de modèles",font.attr=c(style="normal",weights="bold",size="large",col="blue"))
+    add(.$results,.$translate("Model comparison and summary"),font.attr=c(style="normal",weights="bold",size="large",col="blue"))
     add(.$results,"")
-    add(.$results,"Table d\'analyse de la variance/déviance",font.attr=c(style="normal",weights="bold",col="black"))
+    add(.$results,.$translate("Analysis of variance/deviance table"),font.attr=c(style="normal",weights="bold",col="black"))
     add(.$results,"")
     
     if( (length(classes)==1) && (classes == "glm")) {
@@ -1627,9 +1659,9 @@ r2stats = proto(
           
           # Adapt column headers
           if(all.gaussian)
-            attr(.$tabdev,"names")=c("Ddl rés.","Dév. res.","Ddl diff.","Rap.Vr.","F","Pr(>F)")
+            attr(.$tabdev,"names")=.$translate(c("Resid. Df", "Resid. Dev","Diff. Df","LR","F","Pr(>F)"))
           else 
-            attr(.$tabdev,"names")=c("Ddl rés.","Dév. res.","Ddl diff." ,"Rap.Vr.","Pr(>Chi2)")
+            attr(.$tabdev,"names")=.$translate(c("Resid. Df", "Resid. Dev","Diff. Df","LR","Pr(>Chi2)"))
 
           # Model names appear as row names
           attr(.$tabdev,"row.names") = comp
@@ -1666,7 +1698,7 @@ r2stats = proto(
      	  if(distribs == "gaussian") {
        	    cmd = paste(".$tabdev = summary(aov(.$models$",comp,"$Rmodel))[[1]]",sep="")
       	    eval(parse(text=cmd))
-            attr(.$tabdev,"names")=c("Ddl.","SC","CM","F","Pr(>F)")
+            attr(.$tabdev,"names")=.$translate(c("Ddl.","SC","CM","F","Pr(>F)"))
      	  }
      	  
      	  # Non-gaussian models: Compare to the null
@@ -1676,7 +1708,7 @@ r2stats = proto(
       	  
       	    # For some reasons, columns are not in the same order with only one model
             .$tabdev = .$tabdev[2:1,c(3,4,1,2,5)]
-            attr(.$tabdev,"names")=c("Ddl rés.","Dév. res.","Ddl diff." ,"Rap.Vr.","Pr(>Chi2)")
+            attr(.$tabdev,"names")=.$translate(c("Resid. Df", "Resid. Dev","Diff. Df","LR","Pr(>Chi2)"))
      	  }
 
         # Remind me of model formulae
@@ -1689,14 +1721,15 @@ r2stats = proto(
 	  
 	    # anova() for a single model not implemented
      	if(length(comp)==1) {
-     	  gmessage("Il faut sélectionner au moins deux modèles.")
+     	  gmessage(.$translate("You must select at least two models."))
      	  return()
       }
       
       chisq = 2 * pmax(0, c(NA, diff(logLiks)))
       dfChisq = c(NA, diff(Dfs))
       pchi2 = pchisq(chisq, dfChisq, lower = FALSE)
-     .$tabdev = data.frame(logV=logLiks,"Ddl."=Dfs,Chi2=chisq,"Ddl diff."=dfChisq,Prob.=pchi2,AIC=AICs,BIC=BICs)
+     .$tabdev = data.frame(logL=logLiks,Df=Dfs,Chi2=chisq,"Diff. Df"=dfChisq,Prob.=pchi2,AIC=AICs,BIC=BICs)
+      names(.$tabdev) = .$translate(names(.$tabdev))
 
       # Model names appear as row names
       attr(.$tabdev,"row.names") = comp
@@ -1754,13 +1787,13 @@ r2stats = proto(
   #
   #------------------------------------------------------------------------------------------------------------------------
   editOptions = function(.,h,...) {
-  
+    gmessage(.$translate("Function not yet available."))
   },
   probCalc = function(.,h,...) {
-  
+    gmessage(.$translate("Function not yet available."))  
   },
   updateR2stats = function(.,h,...) {
-  
+    gmessage(.$translate("Function not yet available."))  
   },
   #------------------------------------------------------------------------------------------------------------------------
   #
@@ -1805,6 +1838,10 @@ r2stats = proto(
     l = sapply(l,function(x) sub("\\(","",x))
     sapply(l,function(x) sub("\\)","",x))  
   },
+  ### Gettext utility for translating messages
+  translate <- function(...) {
+    gettext(..., domain="R-r2stats")
+  },
   #------------------------------------------------------------------------------------------------------------------------
   #
   #                                                 R2STATS SLOTS
@@ -1818,7 +1855,7 @@ r2stats = proto(
   mainWindowTitle            = "R2STATS",
   menu                       = NULL,
   mainNotebook               = NULL,
-  status                     = "Statut : Prêt",
+  status                     = .$translate("Status: Ready."),
   #----- Data slots
   dataUrl                    = NULL,
   hasHeader                  = NULL,
@@ -1836,7 +1873,7 @@ r2stats = proto(
   models                     = list(),
   panedGroup                 = NULL,
   currentData                = NULL,
-  currentDataName            = "Aucun tableau",
+  currentDataName            = .$translate("No table"),
   varList                    = NULL,
   varSummary                 = NULL,
   modelName                  = NULL,                  # Name of the model currently defined in the model tab
@@ -1881,7 +1918,7 @@ R2STATS = function() {
   r2stats$create()
   
   # Some settings
-  r2stats$setVersion(0.65)
+  r2stats$setVersion(0.66)
 
   # Show R2STATS interface
   r2stats$show()

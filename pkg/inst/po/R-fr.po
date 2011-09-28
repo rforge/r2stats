@@ -4,6 +4,16 @@
 
 msgid ""
 msgstr ""
+"Project-Id-Version: R2STATS-0.66\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-09-28 01:39+0100\n"
+"PO-Revision-Date: 2011-09-28 09:03+0100\n"
+"Last-Translator: Yvonnick Noel <yvonnick.noel@uhb.fr>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n>1;\n"
 
 msgid  "Options"
 msgstr "Options"
@@ -39,7 +49,7 @@ msgid  "Column headers on the first row"
 msgstr "Entêtes de colonnes sur la première ligne"
 
 msgid  "Row labels in the first column"
-msgstr "Noms d\'observations dans la première colonne"
+msgstr "Noms d'observations dans la première colonne"
 
 msgid  "Load"
 msgstr "Charger"
@@ -162,13 +172,10 @@ msgid  "Constant"
 msgstr "Constant"
 
 msgid  "Observation selection"
-msgstr "Sélection d\'observation"
+msgstr "Sélection d'observation"
 
 msgid  "Results"
 msgstr "Résultats"
-
-msgid  "Estimate"
-msgstr "Estimer"
 
 msgid  "Plots"
 msgstr "Graphiques"
@@ -224,9 +231,6 @@ msgstr "Sélection"
 msgid  "All groups"
 msgstr "Tous groupes"
 
-msgid  "Data"
-msgstr "Données"
-
 msgid  "Grid"
 msgstr "Grille"
 
@@ -249,7 +253,7 @@ msgid  "Comparisons"
 msgstr "Comparaisons"
 
 msgid  "Fitted models"
-msgstr "Modèles tetés"
+msgstr "Modèles testés"
 
 msgid  "Delete"
 msgstr "Supprimer"
@@ -264,7 +268,7 @@ msgid  "Status: Ready."
 msgstr "Statut: Prêt."
 
 msgid  "Error: GUI not created."
-msgstr "Erreur : l\'interface n'est pas créée."
+msgstr "Erreur : l'interface n'est pas créée."
 
 msgid  "File selector"
 msgstr "Sélecteur de fichiers"
@@ -285,7 +289,7 @@ msgid  "Description"
 msgstr "Description"
 
 msgid  "This table class cannot be edited in the GUI.\nIt has nevertheless been loaded in memory."
-msgstr "Ce tableau est d\'un type non éditable dans l\'interface.\nIl a néamoins été chargé en mémoire."
+msgstr "Ce tableau est d'un type non éditable dans l'interface.\nIl a néamoins été chargé en mémoire."
 
 msgid  "Levels"
 msgstr "Modalités"
@@ -325,7 +329,7 @@ msgid  "Syntax problem in your command."
 msgstr "Problème dans la définition des commandes."
 
 msgid  "Files may only be saved in CSV format."
-msgstr "L\'enregistrement ne peut se faire \nqu\'au format CSV."
+msgstr "L'enregistrement ne peut se faire \nqu'au format CSV."
 
 msgid  "Write error while saving the file."
 msgstr "Erreur lors de l'écriture du fichier."
@@ -343,22 +347,22 @@ msgid  "Total"
 msgstr "Total"
 
 msgid  "Minimum"
-msgstr "Mininum",
+msgstr "Mininum"
 
 msgid  "1st quartile"
-msgstr "1er Quart.",
+msgstr "1er quartile"
 
 msgid  "Median"
-msgstr "Médiane",
+msgstr "Médiane"
 
 msgid  "Mean"
-msgstr "Moyenne",
+msgstr "Moyenne"
 
 msgid  "3rd quartile"
-msgstr "3ème Quartile",
+msgstr "3ème quartile"
 
 msgid  "Maximum"
-msgstr "Maximum",
+msgstr "Maximum"
 
 msgid  "Std. dev."
 msgstr "Ecart-type"
@@ -376,13 +380,13 @@ msgid  "You can't give the same name to both data and model."
 msgstr "Vous ne pouvez donner au modèle\nle nom du tableau de données."
 
 msgid  "This model already exists.\nDo you want to replace it?"
-msgstr "Un modèle du même nom existe déjà.\nVoulez-vous l\'écraser ?"
+msgstr "Un modèle du même nom existe déjà.\nVoulez-vous l'écraser ?"
 
 msgid  "You must specify at least one dependent variable."
 msgstr "Vous devez spécifier au moins une VD."
 
 msgid  "Error: One of the variables does not exist."
-msgstr "Erreur : l\'une des variables invoquées n\'existe pas."
+msgstr "Erreur : l'une des variables invoquées n'existe pas."
 
 msgid  "This distribution is not suited\nfor a categorical variable."
 msgstr "Cette distribution ne convient pas\npour une variable catégorisée."
@@ -397,7 +401,7 @@ msgid  "No plot available."
 msgstr "Pas de graphique disponible."
 
 msgid  "Please use the dot as the decimal separator\nand a blank space as a value separator."
-msgstr "Veuillez utiliser le point comme séparateur décimal\n et l\'espace comme séparateur de valeurs."
+msgstr "Veuillez utiliser le point comme séparateur décimal\n et l'espace comme séparateur de valeurs."
 
 msgid  "This function is only available under Windows."
 msgstr "Fonction disponible sous Windows uniquement."
@@ -421,8 +425,8 @@ msgstr "Nom"
 msgid  "Formula"
 msgstr "Formule"
 
-msgid  "Contrainte"
-msgstr "Constraint"
+msgid  "Constraint"
+msgstr "Contrainte"
 
 msgid  "Distribution"
 msgstr "Distribution"
@@ -431,7 +435,7 @@ msgid  "Link"
 msgstr "Lien"
 
 msgid  "The dependent variable is not the same across these models.\nThe comparison is meaningless."
-msgstr "Les modèles ne portent pas sur la même variable dépendante.\nLa comparaison n\'a pas de sens."
+msgstr "Les modèles ne portent pas sur la même variable dépendante.\nLa comparaison n'a pas de sens."
 
 msgid  "These models do not bear upon the same observation set."
 msgstr "Les modèles ne portent pas sur le même\n sous-ensemble d'observations."
@@ -441,20 +445,20 @@ msgstr "Comparaison et résumé de modèles"
 
 # Headers in an analysis of deviance table
 
-msgid  "Analysis of variance/deviance"
-msgstr "Table d\'analyse de la variance/déviance"
+msgid  "Analysis of variance/deviance table"
+msgstr "Table d'analyse de la variance/déviance"
 
 msgid  "Resid. Df"
-msgstr "Ddl rés.",
+msgstr "Ddl rés."
 
 msgid  "Resid. Dev"
-msgstr "Dév. res.",
+msgstr "Dév. res."
 
 msgid  "Diff. Df"
-msgstr "Ddl diff.",
+msgstr "Ddl diff."
 
 msgid  "LR"
-msgstr "Rap.Vr.",
+msgstr "Rap.Vr."
 
 msgid  "Pr(>F)"
 msgstr "Pr(>F)"
@@ -464,9 +468,6 @@ msgstr "Pr(>Chi2)"
 
 msgid  "Expl.(%)"
 msgstr "Expl.(%)"
-
-msgid  "Df"
-msgstr "Ddl."
 
 msgid  "SS"
 msgstr "SC"
@@ -489,49 +490,138 @@ msgstr "Prob."
 msgid  "logL"
 msgstr "logV"
 
-msgid  ""
-msgstr ""
+msgid  "Status: Parameter estimation in progress..."
+msgstr "Statut : estimation des paramètres en cours..."
 
-msgid  ""
-msgstr ""
+msgid  "Status: Goodness of fit statistics..."
+msgstr "Statut : statistiques de qualité d'ajustement..."
 
-msgid  ""
-msgstr ""
+msgid  "Estimate"  
+msgstr "Estimation"
 
-msgid  ""
-msgstr ""
+msgid  "Std. Error"
+msgstr "Erreur-type"
 
-msgid  ""
-msgstr ""
+msgid  "t value"
+msgstr "T de Student"
 
-msgid  ""
-msgstr ""
+msgid  "Pr(>|t|)"
+msgstr "Pr(>|t|)"
 
-msgid  ""
-msgstr ""
+msgid  "Intercept"
+msgstr "Constante"
 
-msgid  ""
-msgstr ""
+msgid  "Deviance"
+msgstr "Déviance"
 
-msgid  ""
-msgstr ""
+msgid  "Loglikelihood"
+msgstr "Logvraisemblance"
 
-msgid  ""
-msgstr ""
+msgid  "No. of parameters"
+msgstr "Nombre de paramètres"
 
-msgid  ""
-msgstr ""
+msgid  "Statistic"
+msgstr "Statistique"
 
-msgid  ""
-msgstr ""
+msgid  "Status: Tests of model assumptions..."
+msgstr "Statut : test des conditions d'application..."
 
-msgid  ""
-msgstr ""
+msgid  "Status: Output of numerical results..."
+msgstr "Statut : sortie des résultats numériques..."
 
-msgid  ""
-msgstr ""
+msgid  "Goodness of fit"
+msgstr "Qualité d'ajustement"
 
-msgid  ""
-msgstr ""
+msgid  "Test of normality"
+msgstr "Test de normalité"
 
+msgid  "Test of homogeneity of variances"
+msgstr "Test d'homogénéité des variances"
+
+msgid  "Fitted values (by group)"
+msgstr "Valeurs prévues (par groupes)"
+
+msgid  "Group sizes"
+msgstr "Effectifs (par groupes)"
+
+msgid  "Coefficients"
+msgstr "Coefficients"
+
+msgid  "Dispersion"
+msgstr "Dispersion"
+
+msgid  "Expected quantiles"
+msgstr "Quantiles théoriques"
+
+msgid  "Standardized observed residuals"
+msgstr "Résidus standards observés"
+
+msgid  "Quantile-quantile"
+msgstr "Quantile-quantile"
+
+msgid  "Observed quantiles"
+msgstr "Quantiles observés"
+
+msgid  "Estimated intercept"
+msgstr "Constante estimée"
+
+msgid  "Regression"
+msgstr "Régression"
+
+msgid  "Predictor combination"
+msgstr "Combinaison des VI"
+
+msgid  "Fitted values"
+msgstr "Valeurs prévues"
+
+msgid  "Prediction"
+msgstr "Prédiction"
+
+msgid  "Density"
+msgstr "Densité"
+
+msgid  "Response density"
+msgstr "Densité de la réponse"
+
+msgid  "Histogram"
+msgstr "Histogramme"
+
+msgid  "Residual"
+msgstr "Résidu"
+
+msgid  "Residuals"
+msgstr "Résidus"
+
+msgid  "Standardized residuals"
+msgstr "Résidus standardisés"
+
+msgid  "Num.Df."
+msgstr "Ddl. num."
+
+msgid  "Den.Df"
+msgstr "Ddl. denom."
+
+msgid  "Df"
+msgstr "Ddl."
+
+msgid  "Levene's F"
+msgstr "F de Levene"
+
+msgid  "Groups"
+msgstr "Groupes"
+
+msgid  "Error"
+msgstr "Erreur"
+
+msgid  "Function not yet available."
+msgstr "Fonction non disponible."
+
+msgid  "Fixed effects"
+msgstr "Effets fixes"
+
+msgid  "Random effects"
+msgstr "Effets aléatoires"
+
+msgid  "Variance"
+msgstr "Variance"
 

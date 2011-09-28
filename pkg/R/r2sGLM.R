@@ -90,23 +90,24 @@ r2sGLM = proto(
     subset = rep(TRUE,nobs)
     if(.$subset != "NULL") subset = .$getSubset()
 
-    r2stats$setStatus("Statut : statistiques de qualité d\'ajustement....")
+    r2stats$setStatus("Status: Goodness of fit statistics...")
     s = summary.glm(.$Rmodel)
 
     if(nrow(s$coefficients)) {
       s$coefficients = round(s$coefficients,3)
-      colnames(s$coefficients)[1:3]=c("Estimations","Erreurs-type","T de Student")
-      if(.$hasIntercept()) rownames(s$coefficients)[1]="Constante"
+      colnames(s$coefficients) = .$translate(colnames(s$coefficients))
+      if(.$hasIntercept()) rownames(s$coefficients)[1] = .$translate("Intercept")
     }
 
-    res = data.frame(Statistiques=c("Logvraisemblance","Nombre de paramètres","AIC","BIC","Déviance"), 
-                      Valeurs=round(c(.$LogLik(),.$df(),.$Aic(),.$Bic(),.$Deviance()),3),row.names=1)
+    res = data.frame(Statistic=.$translate(c("Loglikelihood","No. of parameters","AIC","BIC","Deviance")), 
+                      Value=round(c(.$LogLik(),.$df(),.$Aic(),.$Bic(),.$Deviance()),3),row.names=1)
+    names(res) = .$translate(names(res))
     
     # Group structure (if any) for additional tests
     if(length(.$designFactors))                        groups = .$groupLabels
-    if( !(.$constrFactor %in% c("Aucun","Constant")) ) groups = model.data[,.$constrFactor]
+    if( !(.$constrFactor %in% .$translate(c("No factor","Constant"))) ) groups = model.data[,.$constrFactor]
     
-    r2stats$setStatus("Statut : test des conditions d\'application....")
+    r2stats$setStatus(.$translate("Status: Tests of model assumptions..."))
 
     # Test normality and homogeneity of variances if family is gaussian and model not constant
     normtest = NULL
@@ -119,27 +120,27 @@ r2sGLM = proto(
       normtest = .$normalityTest(.$Residuals())
     
       # Levene test for homogeneity of variances
-      if(exists("groups") && (.$constrFactor !="Constant")) vartest = .$varTest(.$Residuals(),groups)
+      if(exists("groups") && (.$constrFactor!=.$translate("Constant"))) vartest = .$varTest(.$Residuals(),groups)
     }
 
-    r2stats$setStatus("Statut : sortie des résultats numériques....")
+    r2stats$setStatus(.$translate("Status: Output of numerical results..."))
     
     # Display model name and specifications
-    add(r2stats$results,paste("Modèle",.$name),font.attr=c(style="normal",weights="bold",size="large",col="blue"))
-    modelProps = cbind(c("Tableau","Formule","Contrainte","Lien","Distribution"),
+    add(r2stats$results,paste(.$translate("Model"),.$name),font.attr=c(style="normal",weights="bold",size="large",col="blue"))
+    modelProps = cbind(.$translate(c("Table","Formula","Constraint","Link","Distribution")),
                        c(.$data,.$getFormula(),.$getConstrFactor(),link,family))
     add(r2stats$results,capture.output(prmatrix(modelProps,rowlab=rep("",5),collab=rep("",2),quote=F)),font.attr=c(family="monospace",size="medium"))
     add(r2stats$results,"")
 
     # Display fit statistics
-    add(r2stats$results,"Qualité d\'ajustement", font.attr=c(style="normal",weights="bold",col="black"))
+    add(r2stats$results,.$translate("Goodness of fit"), font.attr=c(style="normal",weights="bold",col="black"))
     add(r2stats$results,"")
     add(r2stats$results,capture.output(res),font.attr=c(family="monospace",size="medium"))
     add(r2stats$results,"")
 
     # Display test of normality
     if(!is.null(normtest)) { 
-      add(r2stats$results,"Test de normalité",font.attr=c(style="normal",weights="bold",col="black"))
+      add(r2stats$results,.$translate("Test of normality"),font.attr=c(style="normal",weights="bold",col="black"))
       add(r2stats$results,"")
       add(r2stats$results,capture.output(normtest),font.attr=c(family="monospace",size="medium"))
       add(r2stats$results,"")
@@ -147,7 +148,7 @@ r2sGLM = proto(
     
     # Display test of homogeneity of variance
     if(!is.null(vartest)) {
-      add(r2stats$results,"Test d\'homogénéité des variances", font.attr=c(style="normal",weights="bold",col="black"))
+      add(r2stats$results,.$translate("Test of homogeneity of variances"), font.attr=c(style="normal",weights="bold",col="black"))
       add(r2stats$results,"")
       add(r2stats$results,capture.output(vartest),font.attr=c(family="monospace",size="medium"))
       add(r2stats$results,"")
@@ -155,24 +156,24 @@ r2sGLM = proto(
     
     # Display fitted values averaged by group, and group frequencies
     if(length(.$designFactors)) {
-      add(r2stats$results,"Valeurs prévues (par groupes)",font.attr=c(style="normal",weights="bold",col="black"))
+      add(r2stats$results,.$translate("Fitted values (by group)"),font.attr=c(style="normal",weights="bold",col="black"))
       add(r2stats$results,"")
       add(r2stats$results,capture.output(tapply(.$getPrediction(),model.data[,.$designFactors],mean)),font.attr=c(family="monospace",size="medium"))
       add(r2stats$results,"")
-      add(r2stats$results,"Effectifs (par groupes)",font.attr=c(style="normal",weights="bold",col="black"))
+      add(r2stats$results,.$translate("Group sizes"),font.attr=c(style="normal",weights="bold",col="black"))
       add(r2stats$results,"")
       add(r2stats$results,capture.output(tapply(.$getPriorWeights(),model.data[,.$designFactors],sum)),font.attr=c(family="monospace",size="medium"))
       add(r2stats$results,"")
     }
 
     # Display coefficients
-    add(r2stats$results,"Coefficients",font.attr=c(style="normal",weights="bold",col="black"))
+    add(r2stats$results,.$translate("Coefficients"),font.attr=c(style="normal",weights="bold",col="black"))
     add(r2stats$results,"")
     if(nrow(s$coefficients) > 0) {
       add(r2stats$results,capture.output(s$coefficients),font.attr=c(family="monospace",size="medium"))
       add(r2stats$results,"")
     }
-    add(r2stats$results,paste("Dispersion :",round(s$dispersion,4)),font.attr=c(family="monospace",size="medium"))
+    add(r2stats$results,paste(.$translate("Dispersion"),round(s$dispersion,4)),font.attr=c(family="monospace",size="medium"))
     add(r2stats$results,"")
 
   },
@@ -222,8 +223,8 @@ r2sGLM = proto(
       
         if(is.null(.$groupLabels)) {
         
-          r2stats$currentPlot = qqmath(~.$Residuals(type="standard"),aspect = "fill",main = paste("Graphique quantile-quantile",.$name,sep=" - "),
-                                        xlab = "Quantiles théoriques",ylab="Résidus standards observés",
+          r2stats$currentPlot = qqmath(~.$Residuals(type="standard"),aspect = "fill",main = paste(.$translate("Quantile-quantile"),.$name,sep=" - "),
+                                        xlab = .$translate("Expected quantiles"),ylab=.$translate("Standardized observed residuals"),
                                         panel = function(x, ...) {
                                            panel.qqmathline(x, ...)
                                            panel.qqmath(x, ...)
@@ -234,8 +235,8 @@ r2sGLM = proto(
 
           r2stats$currentPlot = qqmath(~.$Residuals(type="standard"),groups=.$groupLabels,
                                         key = list(space=legend.loc,text=list(levels(.$groupLabels)),col=.$groupFullColors,columns=legend.cols),
-                                        panel = "panel.superpose",main = paste("Graphique quantile-quantile",.$name,sep=" - "),
-                                        xlab = "Quantiles théoriques",ylab="Résidus standards observés",
+                                        panel = "panel.superpose",main = paste(.$translate("Quantile-quantile"),.$name,sep=" - "),
+                                        xlab = .$translate("Expected quantiles"),ylab=.$translate("Standardized observed residuals"),
                                         panel.groups = function(x, ...) {
                                            panel.qqmathline(x, ...)
                                            panel.qqmath(x, ...)
@@ -251,8 +252,8 @@ r2sGLM = proto(
         if(is.null(.$groupLabels)) {
         
           r2stats$currentPlot = qqmath(~y,distribution = function(x) qgamma(x,shape=shape,rate=shape/fit),
-                                        main = paste("Quantile-quantile",.$name,sep=" - "),
-                                        xlab = "Quantiles théoriques",ylab="Résidus standards observés",
+                                        main = paste(.$translate("Quantile-quantile"),.$name,sep=" - "),
+                                        xlab = .$translate("Expected quantiles"),ylab=.$translate("Standardized observed residuals"),
                                         panel = function(x, ...) {
                                            panel.qqmathline(x, ...)
                                            panel.qqmath(x, ...)
@@ -264,7 +265,7 @@ r2sGLM = proto(
           rate = shape/fit
           r2stats$currentPlot = qqmath(~y,groups=.$groupLabels,
                                         panel = "panel.superpose",main = paste("Quantile-quantile",.$name,sep=" - "),
-                                        xlab = "Quantiles théoriques",ylab="Quantiles observés",
+                                        xlab = .$translate("Expected quantiles"),ylab=.$translate("Observed quantiles"),
                                         distribution = function(x) qgamma(x,shape,rate),
                                         panel.groups = function(x,group.number,...) {
                                            panel.qqmathline(x,shape=shape,rate=rate[group.number],...)
@@ -288,8 +289,8 @@ r2sGLM = proto(
         # No factors neither: A constant model
         if(is.null(.$groupLabels)) {
 
-          xlabel = "Constante estimée"
-          r2stats$currentPlot = xyplot(yaxis~xaxis,xlab=xlabel,ylab=.$dv[1],main=paste("Régression",.$name,sep=" - "),
+          xlabel = .$translate("Estimated intercept")
+          r2stats$currentPlot = xyplot(yaxis~xaxis,xlab=xlabel,ylab=.$dv[1],main=paste(.$translate("Regression"),.$name,sep=" - "),
                                        panel = function(x,y,...) {
                                          if(addData) panel.xyplot(x,y,type="p",cex=.8)
                                          if(addModel) panel.xyplot(x,fit,type="p",pch="+",cex=1.3)
@@ -299,8 +300,8 @@ r2sGLM = proto(
         # Purely categorical model
         else {
 
-          xlabel = "Valeurs prévues (par groupes)"
-          r2stats$currentPlot = xyplot(yaxis~xaxis,groups=.$groupLabels,xlab=xlabel,ylab=.$dv[1],main=paste("Régression",.$name,sep=" - "),
+          xlabel = .$translate("Fitted values (by group)")
+          r2stats$currentPlot = xyplot(yaxis~xaxis,groups=.$groupLabels,xlab=xlabel,ylab=.$dv[1],main=paste(.$translate("Regression"),.$name,sep=" - "),
                                        key = list(space=legend.loc,text=list(levels(.$groupLabels)),col=.$groupFullColors,columns=legend.cols),
                                        panel = function(x,y,groups,subscripts,...) {
                                          if(addGrid)    panel.grid(h=-1,v=-1)
@@ -319,7 +320,7 @@ r2sGLM = proto(
         # No groups: A simple linear model
         if(is.null(.$groupLabels)) {
 
-          r2stats$currentPlot = xyplot(y~xaxis,xlab=xlabel,ylab=.$dv[1],main=paste("Régression",.$name,sep=" - "),
+          r2stats$currentPlot = xyplot(y~xaxis,xlab=xlabel,ylab=.$dv[1],main=paste(.$translate("Regression"),.$name,sep=" - "),
                                        panel = function(x,y,...) { 
                                          if(addGrid)    panel.grid(h=-1,v=-1)
                                          if(addRefLine) panel.abline(a=0,b=1,col="lightgrey",lty=2)
@@ -331,7 +332,7 @@ r2sGLM = proto(
         # With a group structure
         else {
 
-          r2stats$currentPlot = xyplot(y~xaxis,groups=.$groupLabels,xlab=xlabel,ylab=.$dv[1],main=paste("Régression",.$name,sep=" - "),
+          r2stats$currentPlot = xyplot(y~xaxis,groups=.$groupLabels,xlab=xlabel,ylab=.$dv[1],main=paste(.$translate("Regression"),.$name,sep=" - "),
                                        key = list(space=legend.loc,text=list(levels(.$groupLabels)),col=.$groupFullColors,columns=legend.cols),
                                        panel = function(x,y,groups,subscripts,group.number,...) { 
                                          if(addGrid)    panel.grid(h=-1,v=-1)
@@ -347,12 +348,12 @@ r2sGLM = proto(
       else {
       
         xaxis = as.matrix(current.data[,is.vect]) %*% coef(.$Rmodel)[is.vect]
-        xlabel = "Combinaison des VI"
+        xlabel = .$translate("Predictor combination")
 
         # No groups: A simple linear model
         if(is.null(.$groupLabels)) {
 
-          r2stats$currentPlot = xyplot(y~xaxis,xlab=xlabel,ylab=.$dv[1],main=paste("Régression",.$name,sep=" - "),
+          r2stats$currentPlot = xyplot(y~xaxis,xlab=xlabel,ylab=.$dv[1],main=paste(.$translate("Regression"),.$name,sep=" - "),
                                        panel = function(x,y,...) { 
                                          if(addGrid)    panel.grid(h=-1,v=-1)
                                          if(addRefLine) panel.abline(a=0,b=1,col="lightgrey",lty=2)
@@ -364,7 +365,7 @@ r2sGLM = proto(
         # With a group structure
         else {
 
-          r2stats$currentPlot = xyplot(y~xaxis,groups=.$groupLabels,xlab=xlabel,ylab=.$dv[1],main=paste("Régression",.$name,sep=" - "),
+          r2stats$currentPlot = xyplot(y~xaxis,groups=.$groupLabels,xlab=xlabel,ylab=.$dv[1],main=paste(.$translate("Regression"),.$name,sep=" - "),
                                        key = list(space=legend.loc,text=list(levels(.$groupLabels)),col=.$groupFullColors,columns=legend.cols),
                                        panel = function(x,y,groups,subscripts,group.number,...) { 
                                          if(addGrid)    panel.grid(h=-1,v=-1)
@@ -382,7 +383,7 @@ r2sGLM = proto(
     
       # No groups
       if(is.null(.$groupLabels)) {
-        r2stats$currentPlot = xyplot(y~fit,xlab="Valeurs prévues",ylab=.$dv[1],main=paste("Prédiction",.$name,sep=" - "),
+        r2stats$currentPlot = xyplot(y~fit,xlab=.$translate("Fitted values"),ylab=.$dv[1],main=paste(.$translate("Prediction"),.$name,sep=" - "),
                                      panel = function(x,y,...) { 
                                        if(addGrid)    panel.grid(h=-1,v=-1)
                                        panel.abline(a=0,b=1,col="lightgrey",lty=2)
@@ -392,7 +393,7 @@ r2sGLM = proto(
           
       # With a group structure
       else {
-        r2stats$currentPlot = xyplot(y~fit,groups=.$groupLabels,xlab="Valeurs prévues",ylab=.$dv[1],main=paste("Prédiction",.$name,sep=" - "),
+        r2stats$currentPlot = xyplot(y~fit,groups=.$groupLabels,xlab=.$translate("Fitted values"),ylab=.$dv[1],main=paste(.$translate("Prediction"),.$name,sep=" - "),
                                      key = list(space=legend.loc,text=list(levels(.$groupLabels)),col=.$groupFullColors,columns=legend.cols),
                                      panel = function(x,y,groups,subscripts,...) { 
                                        if(addGrid)    panel.grid(h=-1,v=-1)
@@ -408,7 +409,7 @@ r2sGLM = proto(
       # No groups
       if(is.null(.$groupLabels)) {
       
-        r2stats$currentPlot = densityplot(~y,xlab=.$dv[1],ylab="Densité",main=paste("Densité de la réponse",.$name,sep=" - "),
+        r2stats$currentPlot = densityplot(~y,xlab=.$dv[1],ylab=.$translate("Density"),main=paste(.$translate("Response density"),.$name,sep=" - "),
                                      panel = function(x,...) {
                                        if(distr == "gaussian")   panel.mathdensity(dnorm,args = list(mean=mean(x),sd=sqrt(.$getDispersion())))
                                        else if(distr == "Gamma") {
@@ -422,7 +423,7 @@ r2sGLM = proto(
       # With a group structure
       else {
         fit = tapply(fit,.$groupLabels,mean)
-        r2stats$currentPlot = densityplot(~y,groups=.$groupLabels,xlab=.$dv[1],ylab="Densité",main=paste("Densité de la réponse",.$name,sep=" - "),lwd=2,
+        r2stats$currentPlot = densityplot(~y,groups=.$groupLabels,xlab=.$dv[1],ylab=.$translate("Density"),main=paste(.$translate("Response density"),.$name,sep=" - "),lwd=2,
                                      panel = "panel.superpose",col=.$groupFullColors,
                                      key = list(space=legend.loc,text=list(levels(.$groupLabels)),col=.$groupFullColors,columns=legend.cols),
                                      panel.groups = function(x,group.number,...) {
@@ -445,7 +446,7 @@ r2sGLM = proto(
       
         resids = .$Residuals()
         h = hist(resids,plot=FALSE,freq=FALSE)
-        r2stats$currentPlot = histogram(~resids,type="density",main="Histogramme",xlab="Résidus",ylab="Densité",
+        r2stats$currentPlot = histogram(~resids,type="density",main=.$translate("Histogram"),xlab=.$translate("Residuals"),ylab=.$translate("Density"),
                                         panel = function(x,...) {
                                           panel.histogram(x,breaks=h$breaks,col=NULL,border=.$groupFullColors[1])
                                           panel.mathdensity(dnorm,args = list(mean=mean(x),sd=sqrt(.$getDispersion())),col="black")
@@ -470,8 +471,8 @@ r2sGLM = proto(
           
       # With a group structure
       else {
-        r2stats$currentPlot = xyplot(.$Residuals(type="standard")~fit,groups=.$groupLabels,xlab="Valeurs prévues",ylab="Résidus standard",
-                                     main=paste("Prédiction et résidus",.$name,sep=" - "),
+        r2stats$currentPlot = xyplot(.$Residuals(type="standard")~fit,groups=.$groupLabels,xlab=.$translate("Fitted values"),ylab=.$translate("Standardized residuals"),
+                                     main=paste(.$translate("Fitted values and residuals"),.$name,sep=" - "),
                                      key = list(space=legend.loc,text=list(levels(.$groupLabels)),col=.$groupFullColors,columns=legend.cols),
                                      panel = function(x,y,groups,subscripts,...) { 
                                        if(addGrid)    panel.grid(h=-1,v=-1)
@@ -570,7 +571,7 @@ r2sGLM = proto(
     factor.list = .$getFactorList()
     constrF = .$getConstrFactor()
     
-    if(constrF == "Constant") return("1")
+    if(constrF == .$translate("Constant")) return("1")
     
     # This replaces all factor occurences by the constraint factor
     for(v in factor.list) Formula = gsub(v,constrF,Formula)
@@ -593,7 +594,7 @@ r2sGLM = proto(
   },
   ### Get the list of available plots for this model
   getAvailablePlots = function(.) {
-    return(.$graphTypes)
+    return(.$translate(.$graphTypes))
   },
   ### Get the name of the constraint factor
   getConstrFactor = function(.) {
@@ -605,7 +606,7 @@ r2sGLM = proto(
     formula = paste(c(.$dv,.$iv),collapse="+")
     
     # If a (non constant) constraint factor is defined, it must be added to the model frame
-    if( !(.$constrFactor %in% c("Aucun","Constant"))) formula = paste(c(formula,.$getConstrFactor()),collapse="+")
+    if( !(.$constrFactor %in% .$translate(c("No factor","Constant")))) formula = paste(c(formula,.$getConstrFactor()),collapse="+")
 
     # With model frames, subsetting one variable as a data.frame is possible
     eval(parse(text=paste("model.frame(~",formula,",data=",.$data,",subset=",.$subset,")",sep="")),envir=.GlobalEnv)
@@ -646,8 +647,8 @@ r2sGLM = proto(
     sapply(l,function(x) sub("\\)","",x))
   },
   ### Gettext utility for translating messages
-  translate <- function(...) {
-    gettext(..., domain="R-r2stats")
+  translate = function(.,...) {
+    gettext(..., domain="R-R2STATS")
   },
   #------------------------------------------------------------------------------------------------------------------------
   #
@@ -664,7 +665,7 @@ r2sGLM = proto(
     if(nl == 2) {
       vt = var.test(y~group)
       table = c(vt$statistic,round(vt$parameter),p=vt$p.value)
-      names(table)=c("F","d.d.l. num.","d.d.l. dénom.","p")
+      names(table) = .$translate(c("F","Num.Df","Den.Df","Prob."))
     }
     
     # More than two groups
@@ -672,8 +673,8 @@ r2sGLM = proto(
       meds = tapply(y, group, median, na.rm = TRUE)
       resp = abs(y - meds[group])
       table = anova(lm(resp ~ group))[, c(1, 4, 5)]
-      colnames(table) = c("d.d.l.","F de Levene","Pr(>F)")
-      rownames(table) = c("Groupes","Erreur")
+      colnames(table) = .$translate(c("Df","Levene's F","Pr(>F)"))
+      rownames(table) = .$translate(c("Groups","Error"))
     }
     
     table
@@ -685,7 +686,8 @@ r2sGLM = proto(
     if(length(y) > 5000) normtest = shapiro.test(sample(y,5000))
     else                 normtest = shapiro.test(y)
 
-    normtest = data.frame(W=round(normtest$statistic,3),Prob=round(normtest$p.value,3))
+    normtest = data.frame(W=round(normtest$statistic,3),Prob.=round(normtest$p.value,3))
+    names(normtest) = .$translate(names(normtest))
     row.names(normtest)="Shapiro-Wilk"
     
     normtest
@@ -757,11 +759,7 @@ r2sGLM = proto(
                       binomial = c("logit","probit","cauchit","log","cloglog"),
                       poisson  = c("log","sqrt","identity"),
                       Gamma    = c("inverse","log","identity"),
-                      inverse.gaussian = c("inverse","log","identity","1/mu^2"),
-                      multinomial = c("logistic","probit","cloglog","loglog",
-                                       "cauchit","Aranda-Ordaz", "log-gamma"),
-             "ordered multinomial"= c("logistic","probit","cloglog","loglog",
-                                       "cauchit","Aranda-Ordaz", "log-gamma")),      # List of link functions
+                      inverse.gaussian = c("inverse","log","identity","1/mu^2")),
   weights       = "NULL",                                                            # Name of the weighting variable ("NULL" if none)
   constrFactor  = NULL,                                                              # Name of the constraint factor
   designFactors = NULL,                                                              # Names of the original factors (before constraints)
@@ -770,7 +768,8 @@ r2sGLM = proto(
   groupFullColors   = 1,                                                             # Colors to be used in plots
   groupPastelColors = 1,                                                             # Pastel colors to be used in plots
   groupLabels   = NULL,
-  graphTypes    = c("Graphique de régression","Distribution de la réponse",          # Vector of possible plots for this type of model
-                   "Valeurs prévues et observées","Graphique quantile-quantile",
-                   "Distribution des résidus","Prévisions et résidus")
+  graphTypes    = c("Regression plot","Response distribution",                       # Vector of possible plots for this type of model
+                   "Fitted and observed values","Quantile-quantile plot",
+                   "Residuals distribution","Fitted values and residuals")
 )
+

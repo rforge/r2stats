@@ -16,7 +16,7 @@ options(guiToolkit="RGtk2",width=160)
 require(gWidgetsRGtk2)
 require(proto)
 require(MASS)
-require(lme4a)
+require(lme4)
 require(RGtk2Extras)
 # require(ordinal)
 
@@ -26,7 +26,7 @@ r2stats = proto(
   create = function(.) {
 
     # Main Window
-    .$mainWindow = gwindow("R2STATS",visible=FALSE)
+   .$mainWindow = gwindow("R2STATS",visible=FALSE)
     add(.$mainWindow,bigGroup <- ggroup(horizontal=FALSE),expand=TRUE)
 
     # Menus
@@ -37,10 +37,8 @@ r2stats = proto(
 
     tmp = list(Session=list(options=aOptions,sep=list(separator=TRUE),quit=aClose),
                Tools  =list(calc=aCalc,update=aUpdate))
-
+    names(tmp) = .$translate(names(tmp))
    .$menu = gmenu(tmp,cont=.$mainWindow)
-   .$menu[1] = .$translate("Session")
-   .$menu[2] = .$translate("Tools")
 
     # Tableau d'onglets
     add(bigGroup,.$mainNotebook <- gnotebook(closebuttons=TRUE,dontCloseThese=1:5),expand=TRUE)
@@ -96,7 +94,7 @@ r2stats = proto(
     add(tmp,        glabel(.$translate("With")))
     add(tmp,       .$currentFactor  <- gdroplist(.$translate("No factor"),handler=.$printCat))
     add(transfrm,   tmp             <- ggroup(horizontal=FALSE),expand=TRUE)
-    add(tmp,        glabel(.$translate("Apply (ex. \"cat1,cat2=cat12;cat3,cat4=cat34\" or log(.)) :")))
+    add(tmp,        glabel(.$translate("Apply (ex. \"cat1,cat2=cat12;cat3,cat4=cat34\" or log(.))")))
     add(tmp,       .$toCompute      <- gedit("",width=40))
     add(transfrm,   tmp             <- ggroup(horizontal=FALSE))
     add(tmp,        glabel(.$translate("Store in")))
@@ -212,7 +210,7 @@ r2stats = proto(
     layout[2,1] =  .$distribList
     layout[2,2] =  .$currentLinkList
     layout[2,3] <- .$weightList <- gdroplist(c(.$translate("No variable"),.$getNumVarList(.$getCurrentDataName())))
-    layout[2,4] <- .$structList <- gdroplist(c(.$translate("None"),.$translate("Constant"),.$getCatVarList(.$getCurrentDataName())))
+    layout[2,4] <- .$structList <- gdroplist(c(.$translate("No factor"),.$translate("Constant"),.$getCatVarList(.$getCurrentDataName())))
     layout[3,1] = glabel(.$translate("Observation selection"))
     layout[3,2:4] <- .$subsetVar <- gedit("")
     addSpring(tmp)
@@ -222,7 +220,7 @@ r2stats = proto(
     add(tmp,gbutton(.$translate("Estimate"),handler=.$run))
 
     #------------------------------------------------ Result Tab ------------------------------------------
-    add(.$mainNotebook,resBigFrame <- ggroup(horizontal=FALSE),override.closebutton=TRUE,label=.$translate("Résultats"))
+    add(.$mainNotebook,resBigFrame <- ggroup(horizontal=FALSE),override.closebutton=TRUE,label=.$translate("Results"))
     add(resBigFrame,.$results <- gtext(wrap=FALSE),expand=TRUE)
     add(resBigFrame,tmp <- ggroup())
     add(tmp,gbutton(.$translate("Clear"),handler=.$clearResults))
@@ -232,7 +230,7 @@ r2stats = proto(
     add(graphBigFrame,  .$graphPanedGroup <- gpanedgroup(),expand=TRUE)
     add(.$graphPanedGroup, graphLeftGroup  <- ggroup(horizontal=FALSE),expand=TRUE)
     add(graphLeftGroup,                     glabel(.$translate("Plot type")))
-    add(graphLeftGroup, .$plotType       <- gdroplist(.$translate(c("Graphique de régression","Distribution de la réponse","Valeurs prévues et observées","Graphique quantile-quantile","Distribution des résidus","Prévisions et résidus")),handler=.$plotCurrentModel,action="plot"))
+    add(graphLeftGroup, .$plotType       <- gdroplist(.$translate(c("Regression plot","Response distribution","Fitted and observed values","Quantile-quantile plot","Residuals distribution","Fitted values and residuals")),handler=.$plotCurrentModel,action="plot"))
     add(graphLeftGroup,  graphNb         <- gnotebook(), expand=TRUE)
     add(graphNb,         graphModelGroup <- ggroup(horizontal=FALSE),label=.$translate("Model"),expand=TRUE)
     add(graphModelGroup,.$graphModelList <- gtable(.$getModelList()),expand=TRUE)
@@ -240,8 +238,8 @@ r2stats = proto(
     add(graphNb,         graphParamGroup <- ggroup(horizontal=FALSE),label=.$translate("Options"),expand=TRUE)
     add(graphParamGroup,layout <- glayout())
     
-    layout[1,1] = glabel(.$translate("Légende"))
-    layout[1,2] <- .$legendLoc <- gdroplist(.$translate(c("Aucune","A droite","A gauche","En haut","En bas")),handler=.$plotCurrentModel,action="plot")
+    layout[1,1] = glabel(.$translate("Legend"))
+    layout[1,2] <- .$legendLoc <- gdroplist(.$translate(c("None","Right","Left","Top","Bottom")),handler=.$plotCurrentModel,action="plot")
     svalue(.$legendLoc,index=TRUE) = 2
     layout[1,3] <- .$legendCols <- gdroplist(paste(1:10,"col."),handler=.$plotCurrentModel,action="plot")
     layout[2,1] = glabel(.$translate("X-limits"))
@@ -272,7 +270,7 @@ r2stats = proto(
     add(tmp,gbutton(.$translate("Replot"),handler=.$plotCurrentModel,action="plot"))
 
     #--------------------------------------------------- Model comparison tab -------------------------------------
-    add(.$mainNotebook,compBigFrame <- ggroup(horizontal=FALSE),override.closebutton=TRUE,label=.$translate("Comparaisons"))
+    add(.$mainNotebook,compBigFrame <- ggroup(horizontal=FALSE),override.closebutton=TRUE,label=.$translate("Comparisons"))
     add(compBigFrame,modelGroup <- gframe(.$translate("Fitted models")),expand=TRUE,horizontal=FALSE)
     add(modelGroup,.$modelList <- gtable(.$getModelList(),multiple=TRUE),expand=TRUE)
     add(compBigFrame,tmp <- ggroup())
@@ -291,7 +289,7 @@ r2stats = proto(
   show = function(.) {
 
     if(is.null(.$mainWindow)) {
-      gmessage(.$translate("Erreur : l'interface n'est pas créée."))
+      gmessage(.$translate("Error: GUI not created."))
       return()
     }
     
@@ -394,10 +392,10 @@ r2stats = proto(
     if(is.matrix(dl)) ndset = nrow(dl)
     if(is.vector(dl)) ndset = 1        # data() doesn't return a matrix when there is only one dataset!
 
-    if(ndset==0)      { dl = data.frame(Tableau=.$translate("No table"),Description=.$translate("No description"),stringsAsFactors=FALSE) }
-    else if(ndset==1) { dl = data.frame(Tableau=dl[1],  Description=dl[2],   stringsAsFactors=FALSE) }
+    if(ndset==0)      { dl = data.frame(Table=.$translate("No table"),Description=.$translate("No description"),stringsAsFactors=FALSE) }
+    else if(ndset==1) { dl = data.frame(Table=dl[1],  Description=dl[2],   stringsAsFactors=FALSE) }
     # else            { colnames(dl) <- .$translate(c("Tableau","Description")) }
-    colnames(dl) <- .$translate(c("Tableau","Description"))
+    colnames(dl) <- .$translate(colnames(dl))
     dl
   },
   ### Update the list of available datasets upon library selection
@@ -900,7 +898,7 @@ r2stats = proto(
     # A numeric variable
     else if(varType == .$translate("N")) {
       Q = quantile(varContent,probs=c(0,.25,.5,.75,1),na.rm=TRUE)
-     .$varSummary[,] = cbind(Attribute=.$translate(c("Min.","1er Quart.","Médiane","Moyenne","3ème Quart.","Max.","Ecart-type","Total","Manquantes")),
+     .$varSummary[,] = cbind(Attribute=.$translate(c("Minimum","1st quartile","Median","Mean","3rd quartile","Maximum","Std. dev.","Total","Missing")),
                              Value=round(c(Q[1],Q[2],Q[3],mean(varContent,na.rm=TRUE),Q[4],Q[5],sd(varContent,na.rm=TRUE),length(varContent),sum(is.na(varContent))),4))
       names(.$varSummary) = .$translate(names(.$varSummary))
     }
@@ -933,7 +931,7 @@ r2stats = proto(
     svalue(.$fivList) = .$models[[modname]]$ivField
     svalue(distribList,index=TRUE) = .$models[[modname]]$family
     svalue(currentLinkList,index=TRUE) = .$models[[modname]]$link
-    svalue(weightList) = ifelse(.$models[[modname]]$weights=="NULL",.$translate("None"),.$models[[modname]]$weights)
+    svalue(weightList) = ifelse(.$models[[modname]]$weights=="NULL",.$translate("No variable"),.$models[[modname]]$weights)
     svalue(subsetVar) = ifelse(.$models[[modname]]$subset=="NULL", "",.$models[[modname]]$subset)
     svalue(structList) = .$models[[modname]]$constrFactor
   },
@@ -1069,7 +1067,7 @@ r2stats = proto(
     fterms = unlist(strsplit(.$removeSpaces(.$ivField)),"+",fixed=TRUE)
     which.rand = grep("|",fterms,fixed=TRUE)
     if(length(which.rand)>1) {
-      gmessage("Only one random factor is accepted.")
+      gmessage(.$translate("Only one random factor is accepted."))
       return("error")
     }
     
@@ -1077,7 +1075,7 @@ r2stats = proto(
     randvar = .$removeParentheses(fterms[which.rand])
     randvar = unlist(strsplit(randvar,"|",fixed=T))
     if(randvar[1] != "1") {
-      gmessage("Seuls les modèles à incercept aléatoire sont possibles.")
+      gmessage(.$translate("Only random intercept models are accepted."))
       return("error")
     }
     
@@ -1100,7 +1098,7 @@ r2stats = proto(
   },
   ### Get the active R2STATS model
   getCurrentModel = function(.,h,...) {
-    if(.$currentModelName == .$translate("None")) return(.$translate("None"))
+    if(.$currentModelName == .$translate("No model")) return(.$translate("No model"))
     .$models[[.$currentModelName]]
   },
   ### Get a named R2STATS model
@@ -1419,7 +1417,7 @@ r2stats = proto(
     # The model constructs its plot...
     currentModel$Plot(h)
     
-    # ... but R2STATS print it on the device
+    # ... but R2STATS prints it on the device
     print(.$currentPlot)
     
     # Reset observation locator
@@ -1523,14 +1521,14 @@ r2stats = proto(
   ### Copy plot in clipboard
   copyPlot = function(.,h,...) {
     if(Sys.info()["sysname"] != "Windows") {
-      gmessage("This function is only available under Windows.")
+      gmessage(.$translate("This function is only available under Windows."))
     	return()
     }
     
     win.metafile()
    .$plotCurrentModel(h,...)
     dev.off()
-    gmessage("The graph has been saved to clipboard.")
+    gmessage(.$translate("The graph has been saved to clipboard."))
   },
   #------------------------------------------------------------------------------------------------------------------------
   #
@@ -1570,7 +1568,7 @@ r2stats = proto(
     # Vector of selected model names
     modelsToDelete = svalue(.$modelList)
     if(!length(modelsToDelete) || (modelsToDelete == .$translate("No model"))) {
-      .$currentModelName = .$translate("None")
+      .$currentModelName = .$translate("No model")
       return()
     }
     
@@ -1706,8 +1704,8 @@ r2stats = proto(
        	    cmd = paste(".$tabdev = anova(.$models$",comp,"$Rmodel,test='Chisq')",sep="")
       	    eval(parse(text=cmd))
       	  
-      	    # For some reasons, columns are not in the same order with only one model
-            .$tabdev = .$tabdev[2:1,c(3,4,1,2,5)]
+      	    # For some reason, columns are not in the same order with a single model!
+           .$tabdev = .$tabdev[2:1,c(3,4,1,2,5)]
             attr(.$tabdev,"names")=.$translate(c("Resid. Df", "Resid. Dev","Diff. Df","LR","Pr(>Chi2)"))
      	  }
 
@@ -1839,8 +1837,8 @@ r2stats = proto(
     sapply(l,function(x) sub("\\)","",x))  
   },
   ### Gettext utility for translating messages
-  translate <- function(...) {
-    gettext(..., domain="R-r2stats")
+  translate = function(.,...) {
+    gettext(..., domain="R-R2STATS")
   },
   #------------------------------------------------------------------------------------------------------------------------
   #
@@ -1855,7 +1853,7 @@ r2stats = proto(
   mainWindowTitle            = "R2STATS",
   menu                       = NULL,
   mainNotebook               = NULL,
-  status                     = .$translate("Status: Ready."),
+  status                     = "",
   #----- Data slots
   dataUrl                    = NULL,
   hasHeader                  = NULL,
@@ -1873,7 +1871,7 @@ r2stats = proto(
   models                     = list(),
   panedGroup                 = NULL,
   currentData                = NULL,
-  currentDataName            = .$translate("No table"),
+  currentDataName            = "",
   varList                    = NULL,
   varSummary                 = NULL,
   modelName                  = NULL,                  # Name of the model currently defined in the model tab

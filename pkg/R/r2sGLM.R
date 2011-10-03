@@ -2,7 +2,7 @@
 #
 #                      R2STATS: A Graphical User Interface for GLM and GLMM in R
 #                       Yvonnick Noel, University of Brittany, Rennes 2, France
-#                                            2006-2010
+#                                            2006-2011
 #
 #--------------------------------------------------------------------------------------------------
 #                                        GLM PROTOTYPE
@@ -460,7 +460,7 @@ r2sGLM = proto(
 
       # No groups
       if(is.null(.$groupLabels)) {
-        r2stats$currentPlot = xyplot(.$Residuals(type="standard")~fit,xlab="Valeurs prévues",ylab="Résidus standard",main=paste("Prédiction et résidus",.$name,sep=" - "),
+        r2stats$currentPlot = xyplot(.$Residuals(type="standard")~fit,xlab=.$translate("Fitted values"),ylab=.$translate("Standardized residuals"),main=paste(.$translate("Fitted values and residuals"),.$name,sep=" - "),
                                      panel = function(x,y,...) { 
                                        if(addGrid)    panel.grid(h=-1,v=-1)
                                        panel.abline(a=1.96,b=0,col="lightgrey",lty=2)

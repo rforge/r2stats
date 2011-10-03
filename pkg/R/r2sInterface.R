@@ -359,7 +359,7 @@ r2stats = proto(
     else                           res = try(assign(tabname,read.table(filename,header=svalue(.$hasHeader),row.names=r.names),envir = .GlobalEnv))
     
     if(inherits(res,"try-error")) {
-      gmessage(.$translate("Download failure: The server might be down\nor the file name incorrect.\n"))
+      gmessage(.$translate("Download failure: The server might be down\nor the file name incorrect."))
      .$setStatus(.$translate("Status: Ready."))
       return()
     }
@@ -927,6 +927,9 @@ r2stats = proto(
   retrieveModel = function(.,h,...) {
   
     modname = .$getModelName()
+    fitted.models = .$getModelNames()
+    if(!(modname %in% fitted.models)) return()
+    
     svalue(.$dvList)  = .$models[[modname]]$dvField
     svalue(.$fivList) = .$models[[modname]]$ivField
     svalue(distribList,index=TRUE) = .$models[[modname]]$family

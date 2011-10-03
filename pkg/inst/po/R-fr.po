@@ -625,3 +625,6 @@ msgstr "Effets aléatoires"
 msgid  "Variance"
 msgstr "Variance"
 
+msgid "Download failure: The server might be down\nor the file name incorrect."
+msgstr "Erreur de téléchargement : le serveur est peut-être\n inactif, ou le nom de fichier incorrect."
+

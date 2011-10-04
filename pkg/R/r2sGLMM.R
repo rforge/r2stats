@@ -126,7 +126,7 @@ r2sGLMM = proto(
       if(exists("groups") && (.$constrFactor!=.$translate("Constant"))) .$varTest(.$Residuals(),groups)
     }
 
-    r2stats$setStatus("Status: Output of numerical results...")
+    r2stats$setStatus(.$translate("Status: Output of numerical results..."))
     
     # Display model name and specifications
     add(r2stats$results,paste(.$translate("Model"),.$name),font.attr=c(style="normal",weights="bold",size="large",col="blue"))

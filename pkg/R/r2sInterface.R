@@ -8,18 +8,6 @@
 #                                      INTERFACE PROTOTYPE
 #--------------------------------------------------------------------------------------------------
 
-# A first dataset
-data(sleepstudy)
-
-# Required libraries
-options(guiToolkit="RGtk2",width=160)
-require(gWidgetsRGtk2)
-require(proto)
-require(MASS)
-require(lme4)
-require(RGtk2Extras)
-# require(ordinal)
-
 r2stats = proto(
 
   # Create the GUI
@@ -299,7 +287,7 @@ r2stats = proto(
 
     # Popup main window
     visible(.$mainWindow) = TRUE
-    .$setPlotParams()
+   .$setPlotParams()
     
     # Model tab appears first
     svalue(.$mainNotebook) = 3
@@ -1919,7 +1907,7 @@ R2STATS = function() {
   r2stats$create()
   
   # Some settings
-  r2stats$setVersion(0.66)
+  r2stats$setVersion(0.67)
 
   # Show R2STATS interface
   r2stats$show()

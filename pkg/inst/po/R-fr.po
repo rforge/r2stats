@@ -335,7 +335,7 @@ msgid  "Write error while saving the file."
 msgstr "Erreur lors de l'écriture du fichier."
 
 msgid  "Status: CSV file successfully written to disk."
-msgstr "Statut : fichier correctement sauvegardé."
+msgstr "Statut : fichier CSV correctement sauvegardé."
 
 msgid  "Status: Data loading in progress. Please wait..."
 msgstr "Statut : affichage des données. Veuillez patienter..."

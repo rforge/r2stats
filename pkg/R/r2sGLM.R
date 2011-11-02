@@ -24,8 +24,6 @@ r2sGLM = proto(
 
     family = .$getFamily()
     link   = .$getLink()
-    
-    r2stats$setStatus(.$translate("Status: Parameter estimation in progress..."))
 
     # Is the dependent variable a matrix?
     dv = .$dvField
@@ -199,6 +197,8 @@ r2sGLM = proto(
     addGrid     = svalue(r2stats$addGrid)
     addRefLine  = svalue(r2stats$addRefLine)
     addNoise    = svalue(r2stats$addNoise)
+    addCondMeans= svalue(r2stats$addCondMeans)
+    addSmooth   = svalue(r2stats$addSmooth)
 
     # Get data
     current.data = .$getModelData()
@@ -322,10 +322,12 @@ r2sGLM = proto(
 
           r2stats$currentPlot = xyplot(y~xaxis,xlab=xlabel,ylab=.$dv[1],main=paste(.$translate("Regression"),.$name,sep=" - "),
                                        panel = function(x,y,...) { 
-                                         if(addGrid)    panel.grid(h=-1,v=-1)
-                                         if(addRefLine) panel.abline(a=0,b=1,col="lightgrey",lty=2)
-                                         if(addData)    panel.xyplot(x,y,type="p",jitter.x=addNoise,jitter.y=addNoise)
-                                         if(addModel)   panel.xyplot(x,fit,type="a",col="black")
+                                         if(addGrid)      panel.grid(h=-1,v=-1)
+                                         if(addRefLine)   panel.abline(a=0,b=1,col="lightgrey",lty=2)
+                                         if(addCondMeans) panel.average(x,y,fun=mean,horizontal=FALSE,col="darkgrey",lty=2)
+                                         if(addData)      panel.xyplot(x,y,type="p",jitter.x=addNoise,jitter.y=addNoise)
+                                         if(addModel)     panel.xyplot(x,fit,type="a",col="black")
+                                         if(addSmooth)    panel.xyplot(x,y,type="smooth",lty=2)
                                        })
         }
         
@@ -335,11 +337,12 @@ r2sGLM = proto(
           r2stats$currentPlot = xyplot(y~xaxis,groups=.$groupLabels,xlab=xlabel,ylab=.$dv[1],main=paste(.$translate("Regression"),.$name,sep=" - "),
                                        key = list(space=legend.loc,text=list(levels(.$groupLabels)),col=.$groupFullColors,columns=legend.cols),
                                        panel = function(x,y,groups,subscripts,group.number,...) { 
-                                         if(addGrid)    panel.grid(h=-1,v=-1)
-                                         if(addRefLine) panel.abline(a=0,b=1,col="lightgrey",lty=2)
-                                         if(addData)    panel.superpose(x,y,groups,subscripts,type="p",col=.$groupFullColors[group.number],
-                                                              jitter.x=addNoise,jitter.y=addNoise)
-                                         if(addModel)   panel.superpose(x,fit,groups,subscripts,type="a",col=.$groupFullColors[group.number])
+                                         if(addGrid)      panel.grid(h=-1,v=-1)
+                                         if(addRefLine)   panel.abline(a=0,b=1,col="lightgrey",lty=2)
+                                         if(addData)      panel.superpose(x,y,groups,subscripts,type="p",col=.$groupFullColors[group.number],jitter.x=addNoise,jitter.y=addNoise)
+                                         if(addCondMeans) panel.superpose(x,y,panel.groups=panel.average,fun=mean,horizontal=FALSE,groups=.$groupLabels,subscripts,col.lines=.$groupPastelColors[.$groupLabels],lty=2)
+                                         if(addSmooth)    panel.superpose(x,y,panel.groups=panel.xyplot,type="smooth",groups=.$groupLabels,subscripts,col.lines=.$groupPastelColors[.$groupLabels],lty=2)
+                                         if(addModel)     panel.superpose(x,fit,groups,subscripts,type="a",col=.$groupFullColors[group.number])
                                        })
         }
       }
@@ -355,10 +358,12 @@ r2sGLM = proto(
 
           r2stats$currentPlot = xyplot(y~xaxis,xlab=xlabel,ylab=.$dv[1],main=paste(.$translate("Regression"),.$name,sep=" - "),
                                        panel = function(x,y,...) { 
-                                         if(addGrid)    panel.grid(h=-1,v=-1)
-                                         if(addRefLine) panel.abline(a=0,b=1,col="lightgrey",lty=2)
-                                         if(addData)    panel.xyplot(x,y,type="p",jitter.x=addNoise,jitter.y=addNoise)
-                                         if(addModel)   panel.xyplot(x,fit,type="a",col="black")
+                                         if(addGrid)      panel.grid(h=-1,v=-1)
+                                         if(addRefLine)   panel.abline(a=0,b=1,col="lightgrey",lty=2)
+                                         if(addCondMeans) panel.average(x,y,fun=mean,horizontal=FALSE,col="darkgrey",lty=2)
+                                         if(addData)      panel.xyplot(x,y,type="p",jitter.x=addNoise,jitter.y=addNoise)
+                                         if(addSmooth)    panel.xyplot(x,y,type="smooth",lty=2)
+                                         if(addModel)     panel.xyplot(x,fit,type="a",col="black")
                                        })
         }
         
@@ -370,8 +375,9 @@ r2sGLM = proto(
                                        panel = function(x,y,groups,subscripts,group.number,...) { 
                                          if(addGrid)    panel.grid(h=-1,v=-1)
                                          if(addRefLine) panel.abline(a=0,b=1,col="lightgrey",lty=2)
-                                         if(addData)    panel.superpose(x,y,groups,subscripts,type="p",col=.$groupFullColors[group.number],
-                                                              jitter.x=addNoise,jitter.y=addNoise)
+                                         if(addData)    panel.superpose(x,y,groups,subscripts,type="p",col=.$groupFullColors[group.number],jitter.x=addNoise,jitter.y=addNoise)
+                                         if(addCondMeans) panel.superpose(x,y,panel.groups=panel.average,fun=mean,horizontal=FALSE,groups=.$groupLabels,subscripts,col.lines=.$groupPastelColors[.$groupLabels],lty=2)
+                                         if(addSmooth)    panel.superpose(x,y,panel.groups=panel.xyplot,type="smooth",groups=.$groupLabels,subscripts,col.lines=.$groupPastelColors[.$groupLabels],lty=2)
                                          if(addModel)   panel.superpose(x,fit,groups,subscripts,type="a",col=.$groupFullColors[group.number])
                                        })
         }

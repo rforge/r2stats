@@ -24,8 +24,6 @@ r2sGLMM = proto(
 
     family = .$getFamily()
     link   = .$getLink()
-    
-    r2stats$setStatus(.$translate("Status: Parameter estimation in progress..."))
 
     # Is the dependent variable a matrix?
     dv = .$dvField
@@ -163,7 +161,7 @@ r2sGLMM = proto(
       add(r2stats$results,"")
       add(r2stats$results,capture.output(tapply(.$getPrediction(),model.data[,.$designFactors],mean)),font.attr=c(family="monospace",size="medium"))
       add(r2stats$results,"")
-      add(r2stats$results,"Group sizes",font.attr=c(style="normal",sizes="large",weights="bold",size="medium"))
+      add(r2stats$results,.$translate("Group sizes"),font.attr=c(style="normal",col="black",weights="bold"))
       add(r2stats$results,"")
       add(r2stats$results,capture.output(tapply(.$getPriorWeights(),model.data[,.$designFactors],sum)),font.attr=c(family="monospace",size="medium"))
       add(r2stats$results,"")
@@ -206,9 +204,11 @@ r2sGLMM = proto(
     ylim        = r2stats$getYLim()
     addData     = svalue(r2stats$addData)
     addModel    = svalue(r2stats$addModel)
+    addCondMeans= svalue(r2stats$addCondMeans)
     addGrid     = svalue(r2stats$addGrid)
     addRefLine  = svalue(r2stats$addRefLine)
     addNoise    = svalue(r2stats$addNoise)
+    addSmooth   = svalue(r2stats$addSmooth)
     addRandCurves = svalue(r2stats$addRandCurves)
 
     # Get data
@@ -342,9 +342,11 @@ r2sGLMM = proto(
                                          if(addGrid)       panel.grid(h=-1,v=-1)
                                          if(addRefLine)    panel.abline(a=0,b=1,col="lightgrey",lty=2)
                                          if(addData)       panel.superpose(x,y,groups,subscripts,type="p",jitter.x=addNoise,jitter.y=addNoise)
+                                         if(addCondMeans)  panel.average(x,y,fun=mean,horizontal=FALSE,groups,subscripts,col="darkgrey",lty=2)
                                          if(addRandCurves) panel.superpose(x,fit[subscripts],groups,subscripts,type="a")
                                          if(addModel)      panel.superpose(x,ffit[subscripts],groups,subscripts,type="a",col="black")
                                        })
+          if(addSmooth)  r2stats$currentPlot = r2stats$currentPlot + layer(panel.xyplot(x,y,type="smooth",col.lines="darkgrey",lty=2))
         }
         
         # With a group structure
@@ -359,8 +361,11 @@ r2sGLMM = proto(
                                          if(addGrid)       panel.grid(h=-1,v=-1)
                                          if(addRefLine)    panel.abline(a=0,b=1,col="lightgrey",lty=2)
                                          if(addData)       panel.superpose(x,y,groups,subscripts,type="p",jitter.x=addNoise,jitter.y=addNoise,col=gfcol,fill=gpcol)
+                                         if(addCondMeans)  panel.superpose(x,y,panel.groups=panel.average,fun=mean,horizontal=FALSE,groups=.$groupLabels,subscripts,type="a",col.lines=.$groupFullColors[.$groupLabels],lty=2)
                                          if(addRandCurves) panel.superpose(x,fit,groups,subscripts,type="a",col=gpcol)
-                                         if(addModel)      panel.superpose(x,ffit,groups,subscripts,type="a",col=gfcol)
+                                         # if(addSmooth)     panel.superpose(x,y,panel.groups=panel.xyplot,type="smooth",groups=.$groupLabels,subscripts,col.lines=.$groupFullColors[.$groupLabels],lty=2)
+                                         if(addSmooth)     panel.superpose(x,y,panel.groups=panel.loess,groups=.$groupLabels,subscripts,col.lines=.$groupFullColors[.$groupLabels],lty=2)
+                                         if(addModel)      panel.superpose(x,ffit,panel.groups=panel.average,fun=mean,horizontal=FALSE,groups=.$groupLabels,subscripts,type="a",col.lines=.$groupFullColors[.$groupLabels])
                                        })
         }
       }
@@ -381,9 +386,11 @@ r2sGLMM = proto(
                                          if(addGrid)       panel.grid(h=-1,v=-1)
                                          if(addRefLine)    panel.abline(a=0,b=1,col="lightgrey",lty=2)
                                          if(addData)       panel.superpose(x,y,groups,subscripts,type="p",jitter.x=addNoise,jitter.y=addNoise)
+                                         if(addCondMeans)  panel.average(x,y,fun=mean,horizontal=FALSE,groups,subscripts,type="p",col="lightgrey")
                                          if(addRandCurves) panel.superpose(x,fit[subscripts],groups,subscripts,type="a")
                                          if(addModel)      panel.superpose(x,ffit[subscripts],groups,subscripts,type="a",col="black")
                                        })
+          if(addSmooth)  r2stats$currentPlot = r2stats$currentPlot + layer(panel.xyplot(x,y,type="smooth",col.lines="grey",lty=2))
         }
         
         # With a group structure
@@ -398,7 +405,9 @@ r2sGLMM = proto(
                                          if(addGrid)       panel.grid(h=-1,v=-1)
                                          if(addRefLine)    panel.abline(a=0,b=1,col="lightgrey",lty=2)
                                          if(addData)       panel.superpose(x,y,groups,subscripts,type="p",jitter.x=addNoise,jitter.y=addNoise,col=gfcol,fill=gpcol)
+                                         if(addCondMeans)  panel.superpose(x,y,panel.groups=panel.average,fun=mean,horizontal=FALSE,groups=.$groupLabels,subscripts,type="p",col.lines=.$groupPastelColors[.$groupLabels])
                                          if(addRandCurves) panel.superpose(x,fit,groups,subscripts,type="a",col=gpcol)
+                                         if(addSmooth)     panel.superpose(x,y,panel.groups=panel.xyplot,type="smooth",groups=.$groupLabels,subscripts,col.lines=.$groupPastelColors[.$groupLabels],lty=2)
                                          if(addModel)      panel.superpose(x,ffit,groups,subscripts,type="a",col=gfcol)
                                        })
         }

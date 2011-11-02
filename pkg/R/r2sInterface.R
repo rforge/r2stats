@@ -219,30 +219,37 @@ r2stats = proto(
     add(.$graphPanedGroup, graphLeftGroup  <- ggroup(horizontal=FALSE),expand=TRUE)
     add(graphLeftGroup,                     glabel(.$translate("Plot type")))
     add(graphLeftGroup, .$plotType       <- gdroplist(.$translate(c("Regression plot","Response distribution","Fitted and observed values","Quantile-quantile plot","Residuals distribution","Fitted values and residuals")),handler=.$plotCurrentModel,action="plot"))
-    add(graphLeftGroup,  graphNb         <- gnotebook(), expand=TRUE)
+    add(graphLeftGroup,  graphNb         <- gnotebook(),expand=TRUE)
     add(graphNb,         graphModelGroup <- ggroup(horizontal=FALSE),label=.$translate("Model"),expand=TRUE)
     add(graphModelGroup,.$graphModelList <- gtable(.$getModelList()),expand=TRUE)
     addhandlerclicked(  .$graphModelList,  .$plotCurrentModel,action="plot")
     add(graphNb,         graphParamGroup <- ggroup(horizontal=FALSE),label=.$translate("Options"),expand=TRUE)
-    add(graphParamGroup,layout <- glayout())
+
+    add(graphParamGroup,layout1 <- glayout(),fill="")
     
-    layout[1,1] = glabel(.$translate("Legend"))
-    layout[1,2] <- .$legendLoc <- gdroplist(.$translate(c("None","Right","Left","Top","Bottom")),handler=.$plotCurrentModel,action="plot")
+    layout1[1,1,anchor=c(-1,0)] = glabel(.$translate("Legend"))
+    layout1[1,2] <- .$legendLoc <- gdroplist(.$translate(c("None","Right","Left","Top","Bottom")),handler=.$plotCurrentModel,action="plot")
     svalue(.$legendLoc,index=TRUE) = 2
-    layout[1,3] <- .$legendCols <- gdroplist(paste(1:10,"col."),handler=.$plotCurrentModel,action="plot")
-    layout[2,1] = glabel(.$translate("X-limits"))
-    layout[2,2:3] <- .$graphLimitsX <- gedit("",handler=.$plotCurrentModel,action="plot")
-    layout[3,1] = glabel(.$translate("Y-limits"))
-    layout[3,2:3] <- .$graphLimitsY <- gedit("",handler=.$plotCurrentModel,action="plot")
-    layout[4,1] <- .$translate("Selection")
-    layout[4,2:3] <- .$groupList <- gdroplist(c(.$translate("All groups")),handler=.$plotCurrentModel,action="plot")
-    layout[5,1] <- glabel(.$translate("Add"))
-    layout[5,2:3] <- .$addData <- gcheckbox(.$translate("Data"),checked=TRUE,handler=.$plotCurrentModel,action="plot")
-    layout[6,2:3] <- .$addModel <- gcheckbox(.$translate("Model"),checked=TRUE,handler=.$plotCurrentModel,action="plot")
-    layout[7,2:3] <- .$addRandCurves <- gcheckbox(.$translate("Random curves"),checked=TRUE,handler=.$plotCurrentModel,action="plot")
-    layout[8,2:3] <- .$addRefLine <- gcheckbox(.$translate("Reference line"),handler=.$plotCurrentModel,action="plot")
-    layout[9,2:3] <- .$addGrid <- gcheckbox(.$translate("Grid"),handler=.$plotCurrentModel,action="plot")
-    layout[10,2:3] <- .$addNoise <- gcheckbox(.$translate("Noise"),handler=.$plotCurrentModel,action="plot")
+    layout1[2,2] <- .$legendCols <- gdroplist(paste(1:10,"col."),handler=.$plotCurrentModel,action="plot")
+    layout1[3,1,anchor=c(-1,0)] = glabel(.$translate("X-axis"))
+    layout1[3,2] <- .$graphAxisX <- gdroplist(c(.$translate("Default"),.$getNumVarList(.$getCurrentDataName())),handler=.$plotCurrentModel,action="plot")
+    layout1[4,1,anchor=c(-1,0)] = glabel(.$translate("X-limits"))
+    layout1[4,2] <- .$graphLimitsX <- gedit("",handler=.$plotCurrentModel,action="plot")
+    layout1[5,1,anchor=c(-1,0)] = glabel(.$translate("Y-limits"))
+    layout1[5,2] <- .$graphLimitsY <- gedit("",handler=.$plotCurrentModel,action="plot")
+    layout1[6,1,anchor=c(-1,0)] <- .$translate("Selection")
+    layout1[6,2] <- .$groupList <- gdroplist(c(.$translate("All groups")),handler=.$plotCurrentModel,action="plot")
+    
+    add(graphParamGroup, addGroup <- gframe(.$translate("Add")), expand=TRUE)
+    add(addGroup, layout2 <- glayout(),expand=TRUE)
+    layout2[1,1] <- .$addData <- gcheckbox(.$translate("Data"),checked=TRUE,handler=.$plotCurrentModel,action="plot")
+    layout2[2,1] <- .$addModel <- gcheckbox(.$translate("Model"),checked=TRUE,handler=.$plotCurrentModel,action="plot")
+    layout2[3,1] <- .$addCondMeans <- gcheckbox(.$translate("Conditional means"),checked=FALSE,handler=.$plotCurrentModel,action="plot")
+    layout2[4,1] <- .$addRandCurves <- gcheckbox(.$translate("Random curves"),checked=TRUE,handler=.$plotCurrentModel,action="plot")
+    layout2[1,2] <- .$addRefLine <- gcheckbox(.$translate("Reference line"),handler=.$plotCurrentModel,action="plot")
+    layout2[2,2] <- .$addGrid <- gcheckbox(.$translate("Grid"),handler=.$plotCurrentModel,action="plot")
+    layout2[3,2] <- .$addNoise <- gcheckbox(.$translate("Noise"),handler=.$plotCurrentModel,action="plot")
+    layout2[4,2] <- .$addSmooth <- gcheckbox(.$translate("Smoothing"),handler=.$plotCurrentModel,action="plot")
     
     add(.$graphPanedGroup,graphRightGroup <- ggroup(horizontal=FALSE),expand=TRUE)
     add(graphRightGroup,.$plotArea <- ggraphics())
@@ -291,8 +298,10 @@ r2stats = proto(
     
     # Model tab appears first
     svalue(.$mainNotebook) = 3
+    
+    # Set model and graph panel sizes
     svalue(.$modelPanedGroup) = .25
-    svalue(.$graphPanedGroup) = .35
+    svalue(.$graphPanedGroup) = .40
 
   },
   #------------------------------------------------------------------------------------------------------------------------
@@ -352,7 +361,7 @@ r2stats = proto(
       return()
     }
 
-    # Close the corresponding grid upon reloading
+    # Close the corresponding grid if we are reloading an existing one
     displayed.grids = names(.$gridNotebook) 
     if(tabname %in% displayed.grids) {
       pos = which(displayed.grids == tabname)
@@ -462,7 +471,7 @@ r2stats = proto(
     .$currentData[] = available.tables
     svalue(.$currentData) = .$currentDataName
     
-    .$setStatus(paste(.$translate("Statut :"),nt,.$translate("table(s) in workspace.")))
+    .$setStatus(paste(.$translate("Status:"),nt,.$translate("table(s) in workspace.")))
   },
   ### Update the data grids upon grid selector change
   updateGrid = function(.,h,...) {
@@ -1206,6 +1215,8 @@ r2stats = proto(
       gmessage(.$translate("This distribution is not suited\nfor a categorical variable."))
       return()
     }
+    
+   .$setStatus(.$translate("Status: Parameter estimation in progress..."))
 
     # Model definition
     vifs    = .$getIV()
@@ -1276,7 +1287,7 @@ r2stats = proto(
     # Model estimation
     res = model$estimate()
     if(inherits(res,"try-error")) {
-      r2stats$setStatus(.$translate("Status: Ready."))
+     .$setStatus(.$translate("Status: Ready."))
       return()
     }
     
@@ -1294,7 +1305,7 @@ r2stats = proto(
    .$updateModelList(h)
        
     # Update list of available plots (if necessary)
-    r2stats$setStatus(.$translate("Status: Building plots..."))
+   .$setStatus(.$translate("Status: Building plots..."))
     possiblePlots = model$getAvailablePlots()
     lastPlotType = svalue(.$plotType)
     if(any(.$plotType[,] != possiblePlots)) {
@@ -1308,7 +1319,7 @@ r2stats = proto(
     svalue(.$graphModelList,index=TRUE) = whichToPlot
 
     # Switch to result tab
-    r2stats$setStatus(.$translate("Status: Ready."))
+   .$setStatus(.$translate("Status: Ready."))
     svalue(.$mainNotebook) = 4
   },
   #------------------------------------------------------------------------------------------------------------------------
@@ -1405,7 +1416,7 @@ r2stats = proto(
     currentModel = .$models[[.$currentModelName]]
     if(length(currentModel$designFactors)) .$setPlotParams(nlevels(currentModel$groupLabels))
     
-    # The model constructs its plot...
+    # The model constructs its own plot...
     currentModel$Plot(h)
     
     # ... but R2STATS prints it on the device
@@ -1420,7 +1431,6 @@ r2stats = proto(
            panel = function(x,y,...) {
              panel.text(3,3,.$translate("No plot available."))
            })
-    # Ajouter texte : "Pas de graphique disponible.")
   },
   ### Get desired plot type
   getPlotType = function(.) {
@@ -1874,7 +1884,7 @@ r2stats = proto(
   currentLinkList            = NULL,
   weightList                 = NULL,
   structList                 = NULL,
-  subsetVar                  = "NULL",
+  subsetVar                  = "NULL",                # Must be a string
   #----- Result slots
   results                    = NULL,
   #----- Graphics slots
@@ -1884,13 +1894,16 @@ r2stats = proto(
   legendLoc                  = NULL,
   legendCols                 = NULL,
   groupList                  = NULL,
+  graphAxisX                 = NULL,
   graphLimitsX               = NULL,
   graphLimitsY               = NULL,
   addData                    = NULL,
   addModel                   = NULL,
+  addCondMeans               = NULL,
   addRefLine                 = NULL,
   addGrid                    = NULL,
   addNoise                   = NULL,
+  addSmooth                  = NULL,
   addRandCurves              = NULL,
   obsId                      = NULL,
   #----- Model comparison slots
@@ -1898,8 +1911,8 @@ r2stats = proto(
   tabdev                     = NULL
   #----- Probability calculator slots
   #----- Option setting
- )
- 
+)
+
 # Main
 R2STATS = function() {
 
@@ -1907,7 +1920,7 @@ R2STATS = function() {
   r2stats$create()
   
   # Some settings
-  r2stats$setVersion(0.67)
+  r2stats$setVersion(0.68)
 
   # Show R2STATS interface
   r2stats$show()

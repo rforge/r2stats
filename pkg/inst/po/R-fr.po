@@ -4,7 +4,7 @@
 
 msgid ""
 msgstr ""
-"Project-Id-Version: R2STATS-0.66\n"
+"Project-Id-Version: R2STATS-0.67\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-09-28 01:39+0100\n"
 "PO-Revision-Date: 2011-09-28 09:03+0100\n"
@@ -14,6 +14,8 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n>1;\n"
+
+# Main interface
 
 msgid  "Options"
 msgstr "Options"
@@ -32,6 +34,8 @@ msgstr "Calculateur de probabilités"
 
 msgid  "Update R2STATS"
 msgstr "Mise à jour"
+
+# File management
 
 msgid  "Files"
 msgstr "Fichiers"
@@ -87,7 +91,7 @@ msgstr "Aucun"
 msgid  "No variable"
 msgstr "Aucune"
 
-msgid  "Apply (ex.\"cat1,cat2=cat12;cat3,cat4=cat34\" or log(.))"
+msgid  "Apply (ex. \"cat1,cat2=cat12;cat3,cat4=cat34\" or log(.))"
 msgstr "Appliquer (ex. \"cat1,cat2=cat12;cat3,cat4=cat34\" ou log(.))"
 
 msgid  "Store in"
@@ -101,6 +105,8 @@ msgstr "Cliquez pour mettre à jour la liste des tableaux disponibles en mémoir
 
 msgid  "Save"
 msgstr "Enregistrer"
+
+# Model fitting
 
 msgid  "Models"
 msgstr "Modèles"
@@ -174,6 +180,8 @@ msgstr "Constant"
 msgid  "Observation selection"
 msgstr "Sélection d'observation"
 
+# Result display
+
 msgid  "Results"
 msgstr "Résultats"
 
@@ -222,6 +230,12 @@ msgstr "En bas"
 msgid  "X-limits"
 msgstr "Limites X"
 
+msgid  "X-axis"
+msgstr "Axe des X"
+
+msgid  "Default"
+msgstr "Par défaut"
+
 msgid  "Y-limits"
 msgstr "Limites Y"
 
@@ -234,11 +248,17 @@ msgstr "Tous groupes"
 msgid  "Grid"
 msgstr "Grille"
 
+msgid  "Conditional means"
+msgstr "Moyennes conditionnelles"
+
 msgid  "Reference line"
 msgstr "Droite de référence"
 
 msgid  "Noise"
 msgstr "Bruitage"
+
+msgid  "Smoothing"
+msgstr "Lissage"
 
 msgid  "Random curves"
 msgstr "Courbes aléatoires"
@@ -265,7 +285,7 @@ msgid  "Compare"
 msgstr "Comparer"
 
 msgid  "Status: Ready."
-msgstr "Statut: Prêt."
+msgstr "Statut : Prêt."
 
 msgid  "Error: GUI not created."
 msgstr "Erreur : l'interface n'est pas créée."
@@ -625,6 +645,6 @@ msgstr "Effets aléatoires"
 msgid  "Variance"
 msgstr "Variance"
 
-msgid "Download failure: The server might be down\nor the file name incorrect."
+msgid  "Download failure: The server might be down\nor the file name incorrect."
 msgstr "Erreur de téléchargement : le serveur est peut-être\n inactif, ou le nom de fichier incorrect."
 

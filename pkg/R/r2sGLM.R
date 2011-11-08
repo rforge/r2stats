@@ -350,7 +350,18 @@ r2sGLM = proto(
       # Several numeric predictors: Combine them
       else {
       
-        xaxis = as.matrix(current.data[,is.vect]) %*% coef(.$Rmodel)[is.vect]
+        # Prepare plot area
+        xAxisType = svalue(r2stats$graphAxisX)
+        if(xAxisType==.$translate("Default")) {
+          xaxis = as.matrix(current.data[,is.vect]) %*% coef(.$Rmodel)[is.vect]
+          xlabel = .$translate("Predictor combination")        
+        }
+        
+        else {
+          xaxis = current.data[,xAxisType]
+          xlabel = xAxisType
+        }
+
         xlabel = .$translate("Predictor combination")
 
         # No groups: A simple linear model

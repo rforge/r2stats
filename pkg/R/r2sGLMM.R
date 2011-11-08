@@ -1,3 +1,5 @@
+# NAMESPACE issues: http://r.789695.n4.nabble.com/another-import-puzzle-td3408077.html
+# getME() slots: "X" "Z" "Zt" "u" "Gp" "L" "Lambda" "Lambdat" "RX" "RZX" "beta" "theta" "REML" "n_rtrms" "is_REML"
 #--------------------------------------------------------------------------------------------------
 #
 #                      R2STATS: A Graphical User Interface for GLM and GLMM in R
@@ -93,11 +95,12 @@ r2sGLMM = proto(
 
     r2stats$setStatus(.$translate("Status: Goodness of fit statistics..."))
     s = summary(.$Rmodel)
+    coef.table = coef(s)
 
-    if(nrow(s@coefs)) {
-      s@coefs = round(s@coefs,3)
-      colnames(s@coefs)[1:3]=.$translate(c("Estimate","Std. Error","t value"))
-      if(.$hasIntercept()) rownames(s@coefs)[1] = .$translate("Intercept")
+    if(nrow(coef.table)) {
+      coef.table = round(coef.table,3)
+      colnames(coef.table)[1:3]=.$translate(c("Estimate","Std. Error","t value"))
+      if(.$hasIntercept()) rownames(coef.table)[1] = .$translate("Intercept")
     }
 
     res = data.frame(Statistic = .$translate(c("Loglikelihood","No. of parameters","AIC","BIC","Deviance")), 
@@ -170,8 +173,8 @@ r2sGLMM = proto(
     # Display estimates
     add(r2stats$results,.$translate("Fixed effects"),font.attr=c(style="normal",col="black",weights="bold"))
     add(r2stats$results,"")
-    if(nrow(s@coefs) > 0) {
-      add(r2stats$results,capture.output(s@coefs),font.attr=c(family="monospace",size="medium"))
+    if(nrow(coef.table) > 0) {
+      add(r2stats$results,capture.output(coef.table),font.attr=c(family="monospace",size="medium"))
       add(r2stats$results,"")
     }
     add(r2stats$results,.$translate("Random effects"),font.attr=c(style="normal",col="black",weights="bold"))
@@ -374,8 +377,16 @@ r2sGLMM = proto(
       else {
       
         # Prepare plot area
-        xaxis = .$getNumLinearTerm()
-        xlabel = .$translate("Predictor combination")
+        xAxisType = svalue(r2stats$graphAxisX)
+        if(xAxisType==.$translate("Default")) {
+          xaxis = .$getNumLinearTerm()
+          xlabel = .$translate("Predictor combination")        
+        }
+        
+        else {
+          xaxis = current.data[,xAxisType]
+          xlabel = xAxisType
+        }
 
         # No groups
         if(is.null(.$groupLabels)) {
@@ -622,17 +633,18 @@ r2sGLMM = proto(
   },
   ### Get the eta linear term (including random effects)
   getFixedLinearTerm = function(.) {
-    .$Rmodel@X %*% fixef(.$Rmodel)
+    getME(.$Rmodel,"X") %*% fixef(.$Rmodel)
   },
   ### Get the linear term on numeric variables only
   getNumLinearTerm = function(.) {
   
     # Factors are binary recoded in design matrix
-    whichNum = apply(.$Rmodel@X,2,function(var) length(unique(var))>2)
+    X = getME(.$Rmodel,"X")
+    whichNum = apply(X,2,function(x) length(unique(x))>2)
     
     # Numeric prediction
     numCoefs = cbind(coef(summary(.$Rmodel))[whichNum,1])
-    cbind(.$Rmodel@X)[,whichNum] %*% numCoefs
+    cbind(X)[,whichNum] %*% numCoefs
   },
   ### Get the prior weights
   getPriorWeights = function(.) {

@@ -314,8 +314,17 @@ r2sGLM = proto(
       
       # A single numeric variable: Take it as the x-axis
       else if(length(is.vect)==1) {
-        xaxis = current.data[,is.vect]
-        xlabel = is.vect
+      
+        xAxisType = svalue(r2stats$graphAxisX)
+        if(xAxisType==.$translate("Default")) {
+          xaxis = current.data[,is.vect]
+          xlabel = is.vect
+        }
+        
+        else {
+          xaxis = .$getFullData()[,xAxisType]
+          xlabel = xAxisType
+        }
 
         # No groups: A simple linear model
         if(is.null(.$groupLabels)) {
@@ -358,11 +367,9 @@ r2sGLM = proto(
         }
         
         else {
-          xaxis = current.data[,xAxisType]
+          xaxis = .$getFullData()[,xAxisType]
           xlabel = xAxisType
         }
-
-        xlabel = .$translate("Predictor combination")
 
         # No groups: A simple linear model
         if(is.null(.$groupLabels)) {

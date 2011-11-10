@@ -123,6 +123,7 @@ r2stats = proto(
     addhandlerchanged(.$currentData, .$clearModelFields)
     addhandlerchanged(.$currentData, .$updateWeightList)
     addhandlerchanged(.$currentData, .$updateConstrFactor)
+    addhandlerchanged(.$currentData, .$updateGraphNumVarList)
     add(tmp,             myicon2 <-   gimage("refresh",dir="stock",handler=.$updateDFLists))
     tooltip(myicon2) = .$translate("Click to update list of loaded data frames")
 
@@ -852,6 +853,20 @@ r2stats = proto(
    .$weightList[] = c(.$translate("No variable"),variables)
     if(!weightVar %in% .$weightList[]) svalue(.$weightList) = .$translate("No variable")
     else svalue(.$weightList) = weightVar  
+  },
+  ### Update the numeric variables list on the graph tab (to be used as the x-axis)
+  updateGraphNumVarList = function(.,h,...) {
+
+    if(.$currentDataName == .$translate("No table")) {
+      svalue(.$graphAxisX) = .$translate("Default")
+      return()
+    }
+  
+    variables = .$getNumVarList(.$currentDataName)
+    xaxisVar = svalue(.$graphAxisX)
+   .$graphAxisX[] = c(.$translate("Default"),variables)
+    if(!xaxisVar %in% .$graphAxisX[]) svalue(.$graphAxisX) = .$translate("Default")
+    else svalue(.$graphAxisX) = xaxisVar  
   },
   ### Update the constraint factor list
   updateConstrFactor = function(.,h,...) {

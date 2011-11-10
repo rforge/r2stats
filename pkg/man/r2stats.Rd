@@ -1,29 +1,23 @@
-\name{R2STATS}
-\alias{R2STATS}
-%- Also NEED an '\alias' for EACH other topic documented here.
+\name{r2stats}
+\alias{r2stats}
 \title{
-R2STATS
+%%   ~~ data name/kind ... ~~
+  Internal object for storing the R2STATS GUI.
 }
 \description{
-A function to construct and launch the R2STATS interface.
-}
-\usage{
-R2STATS()
+%%  ~~ A concise (1-5 lines) description of the dataset. ~~
+  r2stats is a proto object containing all data and methods for the R2STATS GUI.
 }
 \details{
-The interface is stored in the proto object 'r2stats'.
+%%  ~~ If necessary, more details than the __description__ above ~~
+  It is very unlikelily that access to this object is needed, but just in case: The R representation of any model is in the .$Rmodel field.
 }
-\value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-  \item{r2stats}{A proto object which field 'models' contains the list of all models tested, in R2STATS model representation.}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
+\examples{
+# Once the GUI has been launched and your-model-name has been fitted,
+# this gives you the internal R model object:
+\dontrun{r2stats$models$your.model.name$Rmodel}
 }
 \author{
 Yvonnick Noel, University of Brittany, Rennes, France.
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
-\keyword{ GUI }
-
+\keyword{GUI}

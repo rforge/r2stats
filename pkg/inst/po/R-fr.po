@@ -252,7 +252,7 @@ msgid  "Conditional means"
 msgstr "Moyennes conditionnelles"
 
 msgid  "Reference line"
-msgstr "Droite de référence"
+msgstr "Droite de\nréférence"
 
 msgid  "Noise"
 msgstr "Bruitage"

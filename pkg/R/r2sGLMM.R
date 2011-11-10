@@ -333,8 +333,15 @@ r2sGLMM = proto(
       # A single numeric variable: Take it as the x-axis
       else if(length(is.vect)==1) {
       
-        xaxis = current.data[,is.vect]
-        xlabel = is.vect
+        xAxisType = svalue(r2stats$graphAxisX)
+        if(xAxisType==.$translate("Default")) {
+          xaxis = current.data[,is.vect]
+          xlabel = is.vect
+        }
+        else {
+          xaxis = .$getFullData()[,xAxisType]
+          xlabel = xAxisType      
+        }
 
         # No groups
         if(is.null(.$groupLabels)) {
@@ -384,7 +391,7 @@ r2sGLMM = proto(
         }
         
         else {
-          xaxis = current.data[,xAxisType]
+          xaxis = .$getFullData()[,xAxisType]
           xlabel = xAxisType
         }
 
@@ -617,6 +624,8 @@ r2sGLMM = proto(
   },
   ### Get the full data table
   getFullData = function(.) {
+  
+    # Original data set is not stored in the model object so we go fetch it in the global env.
     eval(parse(text=.$Rmodel@call[[3]]),env=.GlobalEnv)
   },
   ### Get individual fitted values

@@ -10,4 +10,4 @@ Description: R2STATS is a gWidgetsRGtk2 GUI for fitting and comparing GLM or GLM
 URL: http://yvonnick.noel.free.fr/r2stats
 License: GPL (>=2)
 Depends: proto, cairoDevice, gWidgetsRGtk2, MASS, RGtk2Extras, latticeExtra
-Imports: Matrix, lme4
+Imports: Matrix, lme4, utils

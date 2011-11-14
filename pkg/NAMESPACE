@@ -2,6 +2,7 @@ importFrom("lme4",glmer,lmer,logLik,getME)
 importClassesFrom("lme4",mer,summary.mer)
 importMethodsFrom("lme4",summary,coef,residuals,logLik,deviance,fitted,anova,vcov,VarCorr,fixef,formula,model.frame,model.matrix,ranef,terms,update)
 importFrom(Matrix, summary)
+importFrom("utils", data)
 
 export("R2STATS","r2stats")
 

@@ -1,7 +1,7 @@
 Package: R2STATS
 Type: Package
 Title: A GTK GUI for fitting and comparing GLM and GLMM in R
-Version: 0.68-27
+Version: 0.68-28
 Encoding: UTF-8
 Date: 2011-11-07
 Author: Yvonnick Noel

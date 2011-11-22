@@ -18,12 +18,14 @@ r2stats = proto(
     add(.$mainWindow,bigGroup <- ggroup(horizontal=FALSE),expand=TRUE)
 
     # Menus
+    aLoad    = gaction(label=.$translate("Load models"),handler=.$loadModels)
+    aSave    = gaction(label=.$translate("Save models"),handler=.$saveModels)
     aOptions = gaction(label=.$translate("Options"),handler=.$editOptions)
     aClose   = gaction(label=.$translate("Quit"),icon="quit",handler=function(h,...) dispose(.$mainWindow))
     aCalc    = gaction(label=.$translate("Probability calculator"),handler=.$probCalc)
     aUpdate  = gaction(label=.$translate("Update R2STATS"),handler=.$updateR2stats)
 
-    tmp = list(Session=list(options=aOptions,sep=list(separator=TRUE),quit=aClose),
+    tmp = list(Session=list(load=aLoad,save=aSave,options=aOptions,sep=list(separator=TRUE),quit=aClose),
                Tools  =list(calc=aCalc,update=aUpdate))
     names(tmp) = .$translate(names(tmp))
    .$menu = gmenu(tmp,cont=.$mainWindow)
@@ -329,7 +331,7 @@ r2stats = proto(
     filename = .$fileChoose("open")
 
     if(is.na(filename)) return()
-    if(filename == "")    return()
+    if(filename == "")  return()
 
     # The working directory is implicitly set
     setwd(dirname(filename))
@@ -1592,9 +1594,9 @@ r2stats = proto(
    .$models[modelsToDelete] = NULL
    
     # Remove from model list in the Model tab
-    .$updateModelNameList(h,...)
+   .$updateModelNameList(h,...)
     
-    # Refresh model list in tab 5
+    # Refresh model lists
    .$updateModelList(h,...)
   },
   ### Select all entries in R2STATS model list (tab 5)
@@ -1800,6 +1802,14 @@ r2stats = proto(
   #                                                 R2STATS TOOLS
   #
   #------------------------------------------------------------------------------------------------------------------------
+  loadModels = function(.,h,...) {
+    load(.$fileChoose("open"),envir=.)
+   .$updateModelNameList(h)
+   .$updateModelList(h)
+  },
+  saveModels = function(.,h,...) {
+    save(models,envir=.,file=.$fileChoose("open"))
+  },
   editOptions = function(.,h,...) {
     gmessage(.$translate("Function not yet available."))
   },
@@ -1935,7 +1945,7 @@ R2STATS = function() {
   r2stats$create()
   
   # Some settings
-  r2stats$setVersion(0.68)
+  r2stats$setVersion(packageDescription("R2STATS")$Version)
 
   # Show R2STATS interface
   r2stats$show()

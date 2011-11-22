@@ -11,7 +11,7 @@ R2STATS is a graphical frontend to R designed to make estimation and visualizati
 \tabular{ll}{
 Package: \tab R2STATS\cr
 Type: \tab Package\cr
-Version: \tab 0.68-26\cr
+Version: \tab 0.68-28\cr
 Date: \tab 2011-11-07\cr
 License: \tab GPL (>=2)\cr
 }

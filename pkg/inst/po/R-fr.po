@@ -17,6 +17,12 @@ msgstr ""
 
 # Main interface
 
+msgid  "Save models"
+msgstr "Enregistrer les modèles"
+
+msgid  "Load models"
+msgstr "Charger des modèles"
+
 msgid  "Options"
 msgstr "Options"
 

@@ -29,17 +29,14 @@ msgstr "Options"
 msgid  "Session"
 msgstr "Session"
 
-msgid  "Tools"
-msgstr "Outils"
+msgid  "Help"
+msgstr "Aide"
 
 msgid  "Quit"
 msgstr "Quitter"
 
-msgid  "Probability calculator"
-msgstr "Calculateur de probabilités"
-
-msgid  "Update R2STATS"
-msgstr "Mise à jour"
+msgid  "About..."
+msgstr "A propos de..."
 
 # File management
 

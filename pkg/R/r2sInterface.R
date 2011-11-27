@@ -2,7 +2,7 @@
 #
 #                      R2STATS: A Graphical User Interface for GLM and GLMM in R
 #                       Yvonnick Noel, University of Brittany, Rennes 2, France
-#                                            2006-2010
+#                                            2006-2011
 #
 #--------------------------------------------------------------------------------------------------
 #                                      INTERFACE PROTOTYPE
@@ -14,19 +14,20 @@ r2stats = proto(
   create = function(.) {
 
     # Main Window
-   .$mainWindow = gwindow("R2STATS",visible=FALSE)
+   .$version = packageDescription("R2STATS")$Version
+    mainWindowTitle = paste("R2STATS",Sys.info()["sysname"],.$version,sep="-")
+   .$mainWindow = gwindow(mainWindowTitle,visible=FALSE)
     add(.$mainWindow,bigGroup <- ggroup(horizontal=FALSE),expand=TRUE)
 
     # Menus
     aLoad    = gaction(label=.$translate("Load models"),handler=.$loadModels)
     aSave    = gaction(label=.$translate("Save models"),handler=.$saveModels)
-    aOptions = gaction(label=.$translate("Options"),handler=.$editOptions)
     aClose   = gaction(label=.$translate("Quit"),icon="quit",handler=function(h,...) dispose(.$mainWindow))
-    aCalc    = gaction(label=.$translate("Probability calculator"),handler=.$probCalc)
-    aUpdate  = gaction(label=.$translate("Update R2STATS"),handler=.$updateR2stats)
+    aOptions = gaction(label=.$translate("Options"),handler=.$editOptions)
+    aAbout   = gaction(label=.$translate("About..."),icon="about",handler=.$aboutR2stats)
 
-    tmp = list(Session=list(load=aLoad,save=aSave,options=aOptions,sep=list(separator=TRUE),quit=aClose),
-               Tools  =list(calc=aCalc,update=aUpdate))
+    tmp = list(Session=list(load=aLoad,save=aSave,sep=list(separator=TRUE),quit=aClose),
+               Help  =list(options=aOptions,about=aAbout))
     names(tmp) = .$translate(names(tmp))
    .$menu = gmenu(tmp,cont=.$mainWindow)
 
@@ -1785,11 +1786,6 @@ r2stats = proto(
   #                                                 R2STATS GENERIC METHODS
   #
   #------------------------------------------------------------------------------------------------------------------------
-  setVersion = function(.,version) {
-   .$version = paste(version)
-   .$mainWindowTitle = paste("R2STATS",Sys.info()["sysname"],version,sep="-")
-    svalue(.$mainWindow) = .$mainWindowTitle
-  },
   getVersion = function(.) {
     return(.$version)
   },
@@ -1813,11 +1809,16 @@ r2stats = proto(
   editOptions = function(.,h,...) {
     gmessage(.$translate("Function not yet available."))
   },
-  probCalc = function(.,h,...) {
-    gmessage(.$translate("Function not yet available."))  
-  },
-  updateR2stats = function(.,h,...) {
-    gmessage(.$translate("Function not yet available."))  
+  aboutR2stats = function(.,h,...) {
+    aboutMessage = gbasicdialog(title="About...",do.buttons=FALSE)
+    messageFrame = gframe(cont=aboutMessage,horizontal=FALSE)
+    add(messageFrame,glabel("<span foreground='blue' size='x-large' weight='ultrabold'>R2STATS</span>",markup=TRUE))
+    add(messageFrame,glabel(paste("version",.$version)))
+    add(messageFrame,glabel("\n   A GTK GUI for fitting GLM and GLMM in R   \n"))
+    add(messageFrame,glabel("<b>Yvonnick Noel</b>",markup=TRUE))
+    add(messageFrame,glabel("University of Brittany at Rennes, France"))
+    add(messageFrame,glabel("<i>yvonnick.noel@uhb.fr</i>\n",markup=TRUE))
+    visible(aboutMessage,set=TRUE)
   },
   #------------------------------------------------------------------------------------------------------------------------
   #
@@ -1934,7 +1935,6 @@ r2stats = proto(
   #----- Model comparison slots
   modelList                  = NULL,
   tabdev                     = NULL
-  #----- Probability calculator slots
   #----- Option setting
 )
 
@@ -1944,9 +1944,6 @@ R2STATS = function() {
   # Create R2STATS main window
   r2stats$create()
   
-  # Some settings
-  r2stats$setVersion(packageDescription("R2STATS")$Version)
-
   # Show R2STATS interface
   r2stats$show()
 }

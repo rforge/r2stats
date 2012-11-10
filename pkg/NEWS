@@ -1,0 +1,9 @@
+NEWS for R2STATS
+
+Changes for 0.68-30
+-------------------
+ 
+* Bugs when changing data fixed
+* Load and save models entry menu added
+* Spanish and Polish translations added (thanks to Thierry Marivain and Lukasz Daniel).
+

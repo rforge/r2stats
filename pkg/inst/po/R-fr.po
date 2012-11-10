@@ -302,11 +302,8 @@ msgstr "Tous"
 msgid  "Status: Download in progress. Please wait..."
 msgstr "Statut : téléchargement du fichier en cours. Veuillez patienter..."
 
-msgid  "Erreur de chargement : le serveur est\n peut-étre indisponible ou le\n nom du fichier incorrect.\n"
-msgstr "Download failure: The server might be down\nor the file name incorrect.\n"
-
-msgid  "Tableau"
-msgstr "Table"
+msgid  "Table"
+msgstr "Tableau"
 
 msgid  "Description"
 msgstr "Description"

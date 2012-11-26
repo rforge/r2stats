@@ -561,6 +561,7 @@ r2stats = proto(
     
     # Current data  table and variables
     dataname = displayed.grids[svalue(.$gridNotebook)]
+    if(.$debug) cat("Function: varTransform, dataname: ",dataname,"\n")
     varList = .$getVarList(dataname)
     varTypes = varList[,.$translate("Type")]
     names(varTypes) = varList[,.$translate("Variables")]
@@ -871,6 +872,8 @@ r2stats = proto(
   ### Get the variable names and types list in a data frame
   getVarList = function(.,dataname,type=TRUE) {
 
+    if(.$debug) cat("Function: getVarList, File: ",dataname,"\n")
+    
     if(!length(dataname) || (dataname == "") || (dataname == .$translate("No table"))) {
       vl = data.frame(Variables=.$translate("No variable"),Type="-")
       names(vl) = .$translate(names(vl))
@@ -918,7 +921,7 @@ r2stats = proto(
   ### Update the variable list
   updateVarList = function(.,h,...) {
 
-    newName = svalue(h$obj)
+    newName = svalue(.$currentData)
     if(is.null(newName)) return()
     
    .$currentDataName = newName

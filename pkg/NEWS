@@ -1,5 +1,10 @@
 NEWS for R2STATS
 
+Changes for 0.68-31
+-------------------
+
+* Fixed the "No 'Run' object found" when transforming a variable
+
 Changes for 0.68-30
 -------------------
  

@@ -253,7 +253,7 @@ r2sGLM = proto(
         
           r2stats$currentPlot = qqmath(~y,distribution = function(x) qgamma(x,shape=shape,rate=shape/fit),
                                         main = paste(.$translate("Quantile-quantile"),.$name,sep=" - "),
-                                        xlab = .$translate("Expected quantiles"),ylab=.$translate("Standardized observed residuals"),
+                                        xlab = .$translate("Expected quantiles"),ylab=.$translate("Observed quantiles"),
                                         panel = function(x, ...) {
                                            panel.qqmathline(x, ...)
                                            panel.qqmath(x, ...)
@@ -264,13 +264,15 @@ r2sGLM = proto(
         
           rate = shape/fit
           r2stats$currentPlot = qqmath(~y,groups=.$groupLabels,
-                                        panel = "panel.superpose",main = paste("Quantile-quantile",.$name,sep=" - "),
+                                        key = list(space=legend.loc,text=list(levels(.$groupLabels)),col=.$groupFullColors,columns=legend.cols),
+                                        main = "Quantile-quantile - M1bis",
                                         xlab = .$translate("Expected quantiles"),ylab=.$translate("Observed quantiles"),
                                         distribution = function(x) qgamma(x,shape,rate),
-                                        panel.groups = function(x,group.number,...) {
-                                           panel.qqmathline(x,shape=shape,rate=rate[group.number],...)
-                                           panel.qqmath(x,...)
-                                      })
+                                        panel = function(x,groups,...) {
+                                                  panel.qqmath(x,groups,...)
+                                        })
+
+
         }
       }
       

@@ -140,11 +140,11 @@ r2stats = proto(
 
     # .$distribList = gdroplist(c("Normale","Binomiale","Poisson","Gamma","Gaussienne inverse","Multinomiale","Multinomiale ordonnée"),handler=.$updateLink)
    .$distribList = gdroplist(.$translate(c("Gaussian","Binomial","Poisson","Gamma","Inverse gaussian")),handler=.$updateLink)
-   .$linkLists = list(Gaussian     = .$translate(c("Identique","Log","Inverse")),
+   .$linkLists = list(Gaussian     = .$translate(c("Identity","Log","Inverse")),
                        Binomial     = .$translate(c("Logit","Probit","Cauchit","Log","Cloglog")),
-                       Poisson      = .$translate(c("Log","Racine","Identique")),
-                       Gamma        = .$translate(c("Inverse","Log","Identique")),
-                       "Inverse gaussian" = .$translate(c("Inverse","Log","Identique","1/mu2")))
+                       Poisson      = .$translate(c("Log","Square root","Identity")),
+                       Gamma        = .$translate(c("Inverse","Log","Identity")),
+                       "Inverse gaussian" = .$translate(c("Inverse","Log","Identity","1/mu2")))
          #              Multinomiale = c("Logit", "Probit", "Cloglog", "Loglog","Cauchit", "Aranda-Ordaz", "Log-gamma"),
          #   "Multinomiale ordonnée" = c("Logit", "Probit", "Cloglog", "Loglog","Cauchit", "Aranda-Ordaz", "Log-gamma"))
     names(.$linkLists) = .$translate(names(.$linkLists))
@@ -1765,7 +1765,7 @@ r2stats = proto(
           eval(parse(text=cmd))
           
           # Adapt column headers
-          if(all.gaussian)
+          if( (all.gaussian) || (all.gamma) )
             attr(.$tabdev,"names")=.$translate(c("Resid. Df", "Resid. Dev","Diff. Df","LR","F","Pr(>F)"))
           else 
             attr(.$tabdev,"names")=.$translate(c("Resid. Df", "Resid. Dev","Diff. Df","LR","Pr(>Chi2)"))

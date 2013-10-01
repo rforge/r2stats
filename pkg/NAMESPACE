@@ -1,8 +1,13 @@
-importFrom("lme4",glmer,lmer,logLik,getME)
-importClassesFrom("lme4",mer,summary.mer)
-importMethodsFrom("lme4",summary,coef,residuals,logLik,deviance,fitted,anova,vcov,VarCorr,fixef,formula,model.frame,model.matrix,ranef,terms,update)
+import(proto)
+importFrom("lme4",glmer,lmer,getME,fixef,ranef,VarCorr)
+importClassesFrom("lme4",merMod,lmerMod,glmerMod)
 importFrom(Matrix, summary)
-importFrom("utils", data)
-
+importFrom("utils",data,packageDescription)
+importFrom("gWidgets",gwindow,ggroup,gframe,gexpandgroup,gtable,ggraphics,gtext,gtoolbar,gaction,ghelp,gbutton,gcheckbox,glabel,gcheckboxgroup,glayout,gcombobox,gmenu,
+                      gnotebook,gdf,gpanedgroup,gdfnotebook,gradio,gedit,gseparator,gfile,gstatusbar)
+importFrom("gWidgetsRGtk2",gdfedit)
+importFrom("grDevices",rgb)
+importFrom("lattice",xyplot,qqmath,trellis.par.set,
+                     panel.qqmathline,panel.qqmath,panel.superpose,panel.xyplot,panel.grid,panel.abline,panel.average,panel.mathdensity,panel.rug,panel.histogram)
 export("R2STATS","r2stats")
 

@@ -20,10 +20,13 @@ The interface is stored in the proto object 'r2stats'.
 %%  \item{comp2 }{Description of 'comp2'}
 %% ...
 }
+\references{
+Noel, Y. (2013). Psychologie statistique avec R, coll. Pratique R, Paris: Springer.
+}
 \author{
 Yvonnick Noel, University of Brittany, Rennes, France.
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
-\keyword{ GUI }
+\keyword{ GUI, GLM, GLMM }
 

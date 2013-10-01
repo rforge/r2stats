@@ -1,5 +1,12 @@
 NEWS for R2STATS
 
+Changes for 0.68-32
+-------------------
+
+* Colnames in the analysis of deviance table for Gamma models were wrong
+* Corrected a bug in quantile-quantile plot for Gamma models
+* Moved packages from Depends to Imports in DESCRIPTION file
+
 Changes for 0.68-31
 -------------------
 

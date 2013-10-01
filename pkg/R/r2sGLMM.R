@@ -32,7 +32,13 @@ r2sGLMM = proto(
     if(length(.$dv) > 1) dv = paste("cbind(",.$dvField,")",sep="")
     
     # Estimate
-    res = try(eval(parse(text=paste(".$Rmodel <-",.$func,"(",dv,"~",.$ivField,",family=",family,"(link=",link,"),data=",.$data,",subset=",.$subset,",weights=",.$weights,")",sep=""))))
+    if( (family=="gaussian") && (link=="identity") ) {
+      res = try(eval(parse(text=paste(".$Rmodel <- lmer","(",dv,"~",.$ivField,",data=",.$data,",subset=",.$subset,",weights=",.$weights,")",sep=""))))
+    }
+    else {
+      res = try(eval(parse(text=paste(".$Rmodel <-",.$func,"(",dv,"~",.$ivField,",family=",family,"(link=",link,"),data=",.$data,",subset=",.$subset,",weights=",.$weights,")",sep=""))))
+    }
+    
     if(inherits(res,"try-error")) return(res)
         
     # Store initial factor names
@@ -179,10 +185,20 @@ r2sGLMM = proto(
     }
     add(r2stats$results,.$translate("Random effects"),font.attr=c(style="normal",col="black",weights="bold"))
     add(r2stats$results,"")
-    if(nrow(s@REmat) > 0) {
-      colnames(s@REmat) = .$translate(colnames(s@REmat))
-      s@REmat[nrow(s@REmat),1] = .$translate("Residual")
-      add(r2stats$results,capture.output(noquote(s@REmat)),font.attr=c(family="monospace",size="medium"))
+    varcorr = VarCorr(.$Rmodel)
+    if(length(varcorr) > 0) {
+
+      # No more REmat matrix in this version of lme4! Reconstruct it.
+      for(l in 1:length(varcorr)) {
+        REmat = cbind(Groups="",Name=attr(varcorr[[l]],"dimnames")[[1]],"Std. dev."=round(attr(varcorr[[l]],"stddev"),3),Corr=round(attr(varcorr[[l]],"correlation"),3))
+        REmat[1,1] = names(varcorr)[l] # Name of the random factor
+        REmat = rbind(REmat,"")         # Add a line for the residual
+        REmat[nrow(REmat),3] = round(attr(varcorr, "sc"), 3)
+        colnames(REmat) = .$translate(colnames(REmat))
+        REmat[nrow(REmat),1] = .$translate("Residual")
+        add(r2stats$results,capture.output(print(as.data.frame(REmat),row.names=FALSE)),font.attr=c(family="monospace",size="medium"))
+      }
+      
       add(r2stats$results,"")
     }  
 
@@ -539,7 +555,7 @@ r2sGLMM = proto(
   },
   ### Get dependent variable
   getY = function(.) {
-    return(.$Rmodel@y)
+    return(.$Rmodel@resp$y)
   },
   ### Get independent variable names
   getIV = function(.) {

@@ -3,8 +3,10 @@
   # Set toolkit
   options(guiToolkit="RGtk2",width=160)
 
-  # A first dataset
-  data(sleepstudy,package="lme4")
+  # A starting dataset
+  tabname = "sleepstudy"
+  pkg = "lme4"
+  eval(parse(text=paste("data(",tabname,",package=",pkg,")",sep=""),envir=.GlobalEnv))
 
   # build the GUI
   R2STATS()

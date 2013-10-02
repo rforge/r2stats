@@ -356,8 +356,8 @@ r2stats = proto(
     r.names = NULL
     if(svalue(.$hasRowNames)) r.names = 1
 
-    if(tolower(name.ext) == "csv") res = try(assign(tabname, read.csv2(filename,header=svalue(.$hasHeader),row.names=r.names),envir = .GlobalEnv))
-    else                           res = try(assign(tabname,read.table(filename,header=svalue(.$hasHeader),row.names=r.names),envir = .GlobalEnv))
+    if(tolower(name.ext) == "csv") res = try(eval(parse(text=paste("assign('",tabname,"',read.csv2('",filename,"',header=",svalue(.$hasHeader),",row.names=",r.names,"),envir = .GlobalEnv)",sep=""))),silent=TRUE)
+    else                           res = try(eval(parse(text=paste("assign('",tabname,"',read.table('",filename,"',header=",svalue(.$hasHeader),",row.names=",r.names,"),envir = .GlobalEnv)",sep=""))),silent=TRUE)
     
     if(inherits(res,"try-error")) {
       gmessage(.$translate("Download failure: The server might be down\nor the file name incorrect."))
@@ -414,9 +414,9 @@ r2stats = proto(
 
     if(.$debug) cat("Function: LoadDataLib\n")
     
-    # Load a data frame from a package in global workspace
+    # Load a data frame from a package
     tabname = svalue(.$libDataList)
-    data(list=tabname,package=svalue(.$libList))
+    eval(parse(text=paste("data(list='",tabname,"',package='",svalue(.$libList),"')",sep="")),envir=.GlobalEnv)
     cl = class(eval(parse(text=tabname),envir=.GlobalEnv))
 
     if(cl != "data.frame")	{

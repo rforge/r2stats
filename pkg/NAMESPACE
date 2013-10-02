@@ -3,6 +3,7 @@ importFrom("lme4",glmer,lmer,getME,fixef,ranef,VarCorr)
 importClassesFrom("lme4",merMod,lmerMod,glmerMod)
 importFrom(Matrix, summary)
 importFrom("utils",data,packageDescription)
+import(cairoDevice)
 import(RGtk2Extras)
 importFrom("gWidgets",gwindow,ggroup,gframe,gexpandgroup,gtable,ggraphics,gtext,gtoolbar,gaction,ghelp,gbutton,gcheckbox,glabel,gcheckboxgroup,glayout,gcombobox,gmenu,
                       gnotebook,gdf,gpanedgroup,gdfnotebook,gradio,gedit,gseparator,gfile,gstatusbar)

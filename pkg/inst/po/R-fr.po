@@ -251,10 +251,10 @@ msgstr "Tous groupes"
 msgid  "Grid"
 msgstr "Grille"
 
-msgid  "Conditional means"
-msgstr "Moyennes conditionnelles"
+msgid  "Conditional\nmeans"
+msgstr "Moyennes\nconditionnelles"
 
-msgid  "Reference line"
+msgid  "Reference\nline"
 msgstr "Droite de\nréférence"
 
 msgid  "Noise"
@@ -581,6 +581,9 @@ msgstr "Quantile-quantile"
 
 msgid  "Observed quantiles"
 msgstr "Quantiles observés"
+
+msgid  "Quantiles residuals"
+msgstr "Résidus quantiles"
 
 msgid  "Estimated intercept"
 msgstr "Constante estimée"

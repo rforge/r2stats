@@ -9,7 +9,9 @@ importFrom("gWidgets",gwindow,ggroup,gframe,gexpandgroup,gtable,ggraphics,gtext,
                       gnotebook,gdf,gpanedgroup,gdfnotebook,gradio,gedit,gseparator,gfile,gstatusbar)
 importFrom("gWidgetsRGtk2",gdfedit)
 importFrom("grDevices",rgb)
-importFrom("lattice",xyplot,qqmath,trellis.par.set,
-                     panel.qqmathline,panel.qqmath,panel.superpose,panel.xyplot,panel.grid,panel.abline,panel.average,panel.mathdensity,panel.rug,panel.histogram)
+importFrom("lattice",xyplot,qqmath,trellis.par.set,histogram,densityplot,
+                     panel.qqmathline,panel.qqmath,panel.superpose,panel.xyplot,panel.text,panel.grid,panel.abline,panel.average,panel.mathdensity,panel.rug,panel.histogram)
+importFrom("MASS",gamma.shape)
+importFrom("statmod",qresiduals)
 export("R2STATS","r2stats")
 

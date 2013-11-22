@@ -509,6 +509,33 @@ r2sGLM = proto(
       }
     }  
 
+    # 7 - Quantile residuals
+    else if(plotType==7) {
+
+      # No groups
+        if(is.null(.$groupLabels)) {
+        
+          r2stats$currentPlot = qqmath(~.$Residuals(type="quantile"),aspect = "fill",main = paste(.$translate("Quantile residuals"),.$name,sep=" - "),
+                                        xlab = .$translate("Expected quantiles"),ylab=.$translate("Quantile residuals"),
+                                        panel = function(x, ...) {
+                                           panel.qqmathline(x, ...)
+                                           panel.qqmath(x, ...)
+                                      })
+        }
+        
+        else {
+
+          r2stats$currentPlot = qqmath(~.$Residuals(type="quantile"),groups=.$groupLabels,
+                                        key = list(space=legend.loc,text=list(levels(.$groupLabels)),col=.$groupFullColors,columns=legend.cols),
+                                        panel = "panel.superpose",main = paste(.$translate("Quantile residuals"),.$name,sep=" - "),
+                                        xlab = .$translate("Expected quantiles"),ylab=.$translate("Quantile residuals"),
+                                        panel.groups = function(x, ...) {
+                                           panel.qqmathline(x, ...)
+                                           panel.qqmath(x, ...)
+                                      })
+        }
+    }
+
     # No legend?
     if(legend.loc == "none") r2stats$currentPlot = update(r2stats$currentPlot,legend=NULL)
     
@@ -758,6 +785,7 @@ r2sGLM = proto(
     if(type=="raw")           residuals(.$Rmodel)
     else if(type=="standard") rstandard(.$Rmodel)
     else if(type=="student")  rstudent(.$Rmodel)
+    else if(type=="quantile") qresiduals(.$Rmodel)
   },
   ### Get dispersion parameter
   getDispersion = function(.) {

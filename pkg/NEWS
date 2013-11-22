@@ -1,5 +1,11 @@
 NEWS for R2STATS
 
+Changes for 0.68-33
+-------------------
+
+* Added quantile residuals in the plots
+* Added some more imports from MASS and lattice (bugs in plots)
+
 Changes for 0.68-32
 -------------------
 

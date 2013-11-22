@@ -824,6 +824,6 @@ r2sGLM = proto(
   groupLabels   = NULL,
   graphTypes    = c("Regression plot","Response distribution",                       # Vector of possible plots for this type of model
                    "Fitted and observed values","Quantile-quantile plot",
-                   "Residuals distribution","Fitted values and residuals")
+                   "Residuals distribution","Fitted values and residuals","Quantile residuals")
 )
 

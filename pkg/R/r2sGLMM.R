@@ -674,8 +674,9 @@ r2sGLMM = proto(
   ### Get the prior weights
   getPriorWeights = function(.) {
 
-    if(length(.$Rmodel@pWt)) return(.$Rmodel@pWt)
-    else                     return(rep(1,length(.$getY())))
+    w = weights(.$Rmodel)
+    if(length(w)) return(w)
+    else          return(rep(1,length(w)))
   },
   ### Boolean: Has the model an intercept
   hasIntercept = function(.) {

@@ -11,6 +11,7 @@ importFrom("gWidgetsRGtk2",gdfedit)
 importFrom("grDevices",rgb)
 importFrom("lattice",xyplot,qqmath,trellis.par.set,histogram,densityplot,
                      panel.qqmathline,panel.qqmath,panel.superpose,panel.xyplot,panel.text,panel.grid,panel.abline,panel.average,panel.mathdensity,panel.rug,panel.histogram)
+importFrom("latticeExtra",layer)
 importFrom("MASS",gamma.shape)
 importFrom("statmod",qresiduals)
 export("R2STATS","r2stats")

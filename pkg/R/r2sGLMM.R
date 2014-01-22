@@ -54,7 +54,7 @@ r2sGLMM = proto(
     # Get explicit labels for factor or indic categories (e.g. Sex0/Sex1 instead of 0/1, -1/1 etc.)
     if(length(.$designFactors)) {
     
-      # 'subset' seems to be the only way to get a data.frame when selection retains a single factor
+      # 'subset' seems to be the only way to get a data.frame when variable selection retains a single factor
       modelFactors = subset(.$getModelData(),select=.$designFactors)
       for(i in 1:ncol(modelFactors)) modelFactors[,i] = paste(.$designFactors[i],modelFactors[,i],sep="")
      .$groupLabels = factor(do.call("paste",modelFactors))
@@ -568,19 +568,21 @@ r2sGLMM = proto(
   getModelVars = function(.) {
     all.vars(terms(.$Rmodel))
   },
-  ### Get the names of factor predictors
+  ### Get the names of fixed factor predictors in the model
   getFactorList = function(.) {
-    varTypes = attr(terms(.$Rmodel),"dataClasses")
-    fn = names(varTypes)[varTypes == "factor"]    
-    fn[ !(fn %in% .$dv) ]
+    is.fact = sapply(.$Rmodel@frame,is.factor)
+    is.fact = names(is.fact)[is.fact]
+    is.fact[ !(is.fact %in% .$getRandomFactorList()) && !(is.fact %in% .$dv) ]
   },
-  # Get the names of the random factors
+  # Get the names of the *random* factors
   getRandomFactorList = function(.) {
-    names(.$Rmodel@flist)
+    names(getME(.$Rmodel,"flist"))
   },
   ### Get the names of numeric predictors
   getNumVarList = function(.) {
-    setdiff(.$iv,.$designFactors)
+    is.num = sapply(.$Rmodel@frame,is.numeric)
+    is.num = names(is.num)[is.num]
+    is.num[ !(is.num %in% .$dv) ]
   },
   ### Get the names of indicator (numeric binary) variables
   getIndicList = function(.) {

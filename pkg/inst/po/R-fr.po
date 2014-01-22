@@ -263,8 +263,8 @@ msgstr "Bruitage"
 msgid  "Smoothing"
 msgstr "Lissage"
 
-msgid  "Random curves"
-msgstr "Courbes aléatoires"
+msgid  "Random\ncurves"
+msgstr "Courbes\naléatoires"
 
 msgid  "Copy"
 msgstr "Copier"

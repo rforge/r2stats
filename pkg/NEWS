@@ -1,9 +1,15 @@
 NEWS for R2STATS
 
+Changes for 0.68-34
+-------------------
+
+* Fixed a bug in GLMM plots (fixed group factors would not appear with different colors)
+* Imports layer from latticeExtras
+
 Changes for 0.68-33
 -------------------
 
-* Added quantile residuals in the plots
+* Added quantile residuals in the plots (from statmod)
 * Added some more imports from MASS and lattice (bugs in plots)
 
 Changes for 0.68-32

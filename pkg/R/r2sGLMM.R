@@ -71,11 +71,11 @@ r2sGLMM = proto(
      .$groupPastelColors = r2stats$getColors(1,"Pastel1")
     }
 
-	  # If a contrast factor is defined, refit with this constraint
-	  if(.$constrFactor != .$translate("No factor")) {
+    # If a contrast factor is defined, refit with this constraint
+    if(.$constrFactor != .$translate("No factor")) {
       res = try(eval(parse(text=paste(".$Rmodel <-update(.$Rmodel,.~",.$getConstrainedFormula(),")"))))
       if(inherits(res,"try-error")) return(res)
-	  }
+    }
 
    .$estimated = TRUE
   },

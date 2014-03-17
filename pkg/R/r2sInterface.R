@@ -316,8 +316,9 @@ r2stats = proto(
   ### Data file selector
   fileChoose = function(.,type) {
   
-    # Under W32
+    # Under W32 (change backslashes into slashes beforehand)
     if(Sys.info()["sysname"] == "Windows") invisible(file.choose())
+    
     # Under Linux
     else   {
       filter = list("All"=list(patterns = c("*")))
@@ -344,6 +345,7 @@ r2stats = proto(
   dataLoad = function(.,h,...) {
     
     filename = .$trim(svalue(.$dataUrl))
+    filename = gsub("\\\\","/",filename)
 
     if(is.na(filename)) return()
     if(filename == "")  return()

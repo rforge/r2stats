@@ -1,7 +1,7 @@
 import(proto)
 importFrom("lme4",glmer,lmer,getME,fixef,ranef,VarCorr)
 importClassesFrom("lme4",merMod,lmerMod,glmerMod)
-importFrom(Matrix, summary)
+importFrom(Matrix, summary,forceSymmetric)
 importFrom("utils",data,packageDescription)
 import(cairoDevice)
 import(RGtk2Extras)
